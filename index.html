@@ -1041,7 +1041,7 @@ Object.assign(TRACKS, {
 /* timbre de cada canción: lead = onda de la melodía · harm = segunda voz · echo = cantidad de eco */
 const VOICING = {
   title: { lead: 'p25', harm: 1, echo: 0.26 },
-  menu: { lead: 'p25', harm: 1, echo: 0.22 },
+  menu: { lead: 'square', lv: 0.042, harm: 1, echo: 0.3, arpW: 'triangle', av: 0.03, drums: 'light' },
   map: { lead: 'p12', lv: 0.055, arpW: 'triangle', av: 0.036, echo: 0.28 },
   w1: { lead: 'p25', harm: 1, echo: 0.18 },
   w2: { lead: 'p12', lv: 0.058, arpW: 'triangle', av: 0.036, echo: 0.26 },
@@ -1049,13 +1049,15 @@ const VOICING = {
   w4: { lead: 'p25', harm: 1, echo: 0.2 },
   boss: { lead: 'square', lv: 0.04, harm: 1, echo: 0.12 },
   quiz: { lead: 'p25', harm: 1, echo: 0.15 },
-  flash: { lead: 'p12', lv: 0.055, echo: 0.1 },
+  flash: { lead: 'p25', lv: 0.045, echo: 0.14 },
   sage: { lead: 'triangle', lv: 0.09, arpW: 'sine', av: 0.042, echo: 0.42 },
   dex: { lead: 'p12', lv: 0.055, arpW: 'triangle', av: 0.036, echo: 0.3 },
   win: { lead: 'p25', harm: 1, echo: 0.24 },
   over: { lead: 'triangle', lv: 0.09, arpW: 'sine', av: 0.04, echo: 0.5 }
 };
 Object.keys(VOICING).forEach(k => Object.assign(TRACKS[k], VOICING[k]));
+/* todo un poco más tranquilo: tempo más lento (Relámpago y el jefe bajan menos, para que sigan apurando) */
+Object.keys(TRACKS).forEach(k => { TRACKS[k].bpm = Math.round(TRACKS[k].bpm * (k === 'flash' || k === 'boss' ? 0.88 : 0.84)); });
 /* versión tranquila de cada mundo, para la mini-clase */
 for (let i = 1; i <= 4; i++) {
   TRACKS['w' + i + 'c'] = Object.assign({}, TRACKS['w' + i], { bpm: Math.round(TRACKS['w' + i].bpm * 0.84), lead: 'triangle', lv: 0.09, harm: 0, arp: true, arpW: 'sine', av: 0.04, bass: 'slow', drums: 'none', echo: 0.4 });
@@ -1154,7 +1156,7 @@ function hit(kind, t, dest, vol) {
   const src = ac.createBufferSource(), f = ac.createBiquadFilter(), hat = kind === 'h', dur = hat ? 0.04 : kind === 'n' ? 0.22 : 0.13;
   src.buffer = noise;
   f.type = 'highpass'; f.frequency.value = hat ? 7000 : kind === 'n' ? 500 : 1600;
-  g.gain.setValueAtTime((hat ? 0.03 : kind === 'n' ? 0.1 : 0.07) * (vol || 1), t);
+  g.gain.setValueAtTime((hat ? 0.018 : kind === 'n' ? 0.1 : 0.05) * (vol || 1), t);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   src.connect(f); f.connect(g);
   src.start(t, Math.random() * 0.5); src.stop(t + dur + 0.02);
@@ -1163,8 +1165,9 @@ function schedStep(m, i, t, d) {
   const s = m.song, e = s.ev[i];
   if (e.l) {
     const len = e.l[1] * d;
-    voice(s.lead || 'p25', mf(e.l[0]), t, len * 0.94, s.lv || 0.05, m.g, { vib: e.l[1] >= 4 });
-    if (e.hm) voice('p12', mf(e.hm), t, len * 0.9, (s.lv || 0.05) * 0.42, m.gl);
+    /* melodía y segunda voz una octava más abajo de como están escritas: menos chillonas */
+    voice(s.lead || 'p25', mf(e.l[0] - 12), t, len * 0.94, s.lv || 0.05, m.g, { vib: e.l[1] >= 4 });
+    if (e.hm) voice('triangle', mf(e.hm - 12), t, len * 0.9, (s.lv || 0.05) * 0.6, m.gl);
   }
   if (e.a) voice(s.arpW || 'p12', mf(e.a), t, d * 1.7, s.av || 0.022, m.gr, { pluck: 1 });
   if (e.b) voice('triangle', mf(e.b[0]), t, e.b[1] * d * 0.92, 0.12, m.g);
@@ -1197,7 +1200,9 @@ function startSong(id, at) {
   g.gain.linearRampToValueAtTime(1, now + 0.4);
   delay.delayTime.value = Math.min(0.9, base * 3);
   fb.gain.value = 0.3; wet.gain.value = song.echo || 0.2;
-  g.connect(bus); g.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(bus);
+  /* filtro que redondea los agudos de las ondas de pulso */
+  const soft = ac.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = 3000; soft.Q.value = 0.4;
+  g.connect(soft); soft.connect(bus); soft.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(bus);
   cur = { id, song, g, gl: side(-0.4), gr: side(0.4), wet, base, step: 0, next: now + 0.1 };
 }
 function sync() {
