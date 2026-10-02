@@ -284,10 +284,6 @@ i.h { visibility: hidden; }
 .foe.hit .boss { animation: shake .3s steps(4) 2; filter: brightness(1.8); }
 .hp { align-self: stretch; height: .42em; margin: 0 var(--b) var(--b); background: rgba(0, 0, 0, .45); box-shadow: 0 0 0 2px var(--line); }
 .hp i { display: block; height: 100%; background: var(--pri); }
-.bonus { flex: none; height: .28em; margin: 0 var(--b); background: rgba(0, 0, 0, .35); box-shadow: 0 0 0 2px var(--line); }
-.bonus i { display: block; width: 100%; height: 100%; background: var(--hi); transform-origin: left; }
-.bonus.run i { animation: drain 15s linear forwards; }
-@keyframes drain { to { transform: scaleX(0); } }
 .opts { display: grid; grid-template-columns: 1fr 1fr; gap: .12em .3em; flex: none; }
 .narrow .opts { grid-template-columns: 1fr; }
 .tip { flex: none; margin: 0 var(--b); padding: .16em .5em; min-height: 1.4em; background: rgba(14, 13, 31, .6); color: var(--cream); font-size: .88em; }
@@ -2001,7 +1997,7 @@ function mkOpts(q) {
 }
 function ask() {
   run.cur = run.queue[run.i];
-  go('quiz', { opts: mkOpts(run.cur), typing: true, hinted: false, fifty: false, cut: [], elapsed: 0 });
+  go('quiz', { opts: mkOpts(run.cur), typing: true, hinted: false, fifty: false, cut: [] });
 }
 function hud() {
   const r = run;
@@ -2016,7 +2012,6 @@ R.quiz = () => {
   return `${hud()}
   <div class="qrow"><div class="who">${SP.robot('neutral', 'talk')}</div>
     <div class="panel arg scroll" id="arg">${q.ctx ? `<div class="ctx">${q.ctx}</div>` : ''}${argHTML(q.t)}</div>${foe()}</div>
-  <div class="bonus" id="bonus"><i></i></div>
   <div class="opts" id="opts" style="visibility:hidden">${V.opts.map((k, i) => `<div class="opt${k === 'ok' ? ' okopt' : ''}${V.cut.includes(i) ? ' cut' : ''}" data-i="${i}"><kbd>${i + 1}</kbd><span>${k === 'ok' ? 'No es falacia' : FAL[k].n}</span></div>`).join('')}</div>
   <div class="tip" id="tip">${tipText()}</div>`;
 };
@@ -2032,10 +2027,8 @@ AFTER.quiz = () => {
 };
 function finishType() {
   V.typing = false; V.n = V.opts.length;
-  const o = $('#opts'), b = $('#bonus');
+  const o = $('#opts');
   if (o) o.style.visibility = 'visible';
-  if (b) { b.firstElementChild.style.animationDelay = (-V.elapsed / 1000) + 's'; b.classList.add('run'); }
-  V.t0 = performance.now() - V.elapsed;
   if (V.cut.includes(V.idx)) V.idx = V.opts.findIndex((_, i) => !V.cut.includes(i));
   setBot(quizMood());
   hl();
@@ -2054,7 +2047,6 @@ function quizDir(b) {
   nav(b);
 }
 function pause() {
-  V.elapsed = V.typing ? 0 : performance.now() - V.t0;
   AU.sfx.ok();
   const prev = V;
   go('pause', { prev });
@@ -2091,7 +2083,7 @@ function checkAch() {
   if (S.t.ok >= 5) award('primo');
 }
 function answer() {
-  const q = run.cur, pick = V.opts[V.idx], ok = pick === q.k, el = performance.now() - V.t0;
+  const q = run.cur, pick = V.opts[V.idx], ok = pick === q.k;
   const s = S.qs[q.id] || [0, 0];
   s[ok ? 0 : 1]++; S.qs[q.id] = s; S.seen[q.k] = 1;
   let isNew = false, gain = 0;
@@ -2100,8 +2092,8 @@ function answer() {
     if (!S.caught[q.k]) { S.caught[q.k] = 1; isNew = true; run.newc++; }
     run.right++; run.streak++; run.best = Math.max(run.best, run.streak);
     S.t.right++; if (q.k === 'ok') S.t.ok++; S.t.streak = Math.max(S.t.streak, run.streak);
-    /* 100 de base, menos las ayudas, más racha y rapidez */
-    gain = 100 - (V.hinted ? 50 : 0) - (V.fifty ? 30 : 0) + Math.min(run.streak - 1, 5) * 10 + Math.round(30 * Math.max(0, 1 - el / 15000) / 5) * 5;
+    /* 100 de base, menos las ayudas, más la racha; sin límite ni premio de tiempo */
+    gain = 100 - (V.hinted ? 50 : 0) - (V.fifty ? 30 : 0) + Math.min(run.streak - 1, 5) * 10;
     run.score += gain; addXP(gain);
     if (run.mode === 'boss') run.hp--;
     checkAch();
@@ -2112,7 +2104,6 @@ function answer() {
   save();
   const els = SEL(), dead = run.hearts <= 0, chosen = els[V.idx];
   els.forEach((e, i) => { e.classList.remove('sel'); if (V.opts[i] === q.k) e.classList.add('right'); else if (i === V.idx) e.classList.add('wrong'); });
-  $('#bonus').classList.remove('run');
   $('#hearts').innerHTML = hearts(run.hearts, run.max);
   const mood = dead ? 'dizzy' : !ok ? 'sad' : isNew ? 'love' : run.streak >= 3 ? 'cool' : 'happy';
   setBot(mood);
@@ -2434,7 +2425,7 @@ LEG.opciones = () => [['◂ ▸', 'ajustar'], ['A', 'elegir'], ['B', 'volver']];
 R.help = () => `<div class="hud"><span class="chip">AYUDA</span><span class="ttl">Cómo jugar</span></div>
   <div class="panel scroll grow">
     <div class="sec"><b>OBJETIVO</b>Lee el argumento y elige qué falacia comete. Si es un argumento legítimo, elige <u>No es falacia</u>.</div>
-    <div class="sec"><b>PUNTOS</b>100 por acierto, más bonus por racha y por rapidez (la barra amarilla). La pista cuesta 50 y el 50/50 cuesta 30.</div>
+    <div class="sec"><b>PUNTOS</b>100 por acierto, más bonus por racha. La pista cuesta 50 y el 50/50 cuesta 30. No hay límite de tiempo: piensa cada respuesta con calma.</div>
     <div class="sec"><b>VIDAS</b>Cada error cuesta una vida, pero te explica por qué falla y cuál es su «primo legítimo». Lo que falles vuelve una vez al final.</div>
     <div class="sec"><b>TECLADO</b>Flechas: mover · Z o Intro: A · X o Esc: B · A y S: L y R · Retroceso: SELECT (pista) · P: START (pausa) · 1 a 4: responder · M: silenciar</div>
     <div class="sec"><b>LO IMPORTANTE</b>Una falacia es un problema de <u>apoyo</u>, no de conclusión. El objetivo no es acusar mucho: es acusar bien.</div>
