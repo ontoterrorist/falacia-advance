@@ -1823,18 +1823,11 @@ function theme() {
   }
   return 'menu';
 }
+/* una sola canción para todo el juego; solo Relámpago y el jefe tienen la suya */
 function song() {
-  switch (V.scr) {
-    case 'title': return 'title';
-    case 'worlds': return 'map';
-    case 'lesson': return V.boss ? 'boss' : 'w' + V.w + 'c';
-    case 'quiz': case 'feedback': case 'pause': return run.song;
-    case 'result': case 'flashend': return 'win';
-    case 'gameover': return 'over';
-    case 'clases': case 'clase': return 'sage';
-    case 'dex': case 'dexd': return 'dex';
-    case 'flash': return 'flash';
-  }
+  if (V.scr === 'flash') return 'flash';
+  if (V.scr === 'lesson' && V.boss) return 'boss';
+  if (run && run.mode === 'boss' && (V.scr === 'quiz' || V.scr === 'feedback' || V.scr === 'pause')) return 'boss';
   return 'menu';
 }
 function setTheme(t) { app.className = app.className.replace(/\bt-\S+/, 't-' + t); }
