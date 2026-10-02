@@ -800,89 +800,10 @@ const api = {
 root.FSprite = api;
 })(typeof window !== 'undefined' ? window : globalThis);
 
+/* Las dos canciones escritas a mano. De «menu» (el tema del juego: A en do mayor, B en la menor)
+   salen las variaciones de cada sección, en audio.js. */
 const TRACKS={
- // Mundo 1: Fortaleza Formal (marcha solemne en re menor)
- w1:{bpm:112,bass:'walk',drums:'march',arp:true,
-  ch:[[50,'min'],[50,'min'],[46,'maj'],[45,'maj'],[50,'min'],[43,'min'],[45,'maj'],[50,'min'],[41,'maj'],[48,'maj'],[43,'min'],[50,'min'],[46,'maj'],[41,'maj'],[45,'maj'],[45,'maj']],
-  bars:[
-   'd5 - - d5 f5 - a5 - d6 - - . a5 - f5 -',
-   'e5 - - e5 f5 - a5 - g5 - - . f5 - e5 -',
-   'd5 - - d5 f5 - a#5 - d6 - - . c6 - a#5 -',
-   'c#5 - - c#5 e5 - a5 - c#6 - - . a5 - e5 .',
-   'd6 - - a5 f5 - a5 - d6 - - a5 f5 - d5 .',
-   'g5 - - a#5 d6 - - . c6 - a#5 - g5 - d5 .',
-   'e5 - - g5 a5 - c#6 - e6 - - . d6 - c#6 -',
-   'd6 - - - a5 - - - f5 - - - d5 - - .',
-   'a5 - c6 - f6 - c6 - a5 - c6 - f6 - - .',
-   'g5 - c6 - e6 - c6 - g5 - c6 - e6 - - .',
-   'a#5 - d6 - g6 - d6 - a#5 - d6 - g6 - - .',
-   'a5 - d6 - f6 - d6 - a5 - d6 - f6 - - .',
-   'd6 - f6 - a#6 - f6 - d6 - f6 - a#6 - - .',
-   'c6 - f6 - a6 - f6 - c6 - f6 - a6 - - .',
-   'e6 - c#6 - a5 - c#6 - e6 - a6 - g6 - e6 .',
-   'c#6 - e6 - a6 - - - . . e6 . d6 . c#6 .']},
- // Mundo 2: Bosque de la Relevancia (pastoral, sol mayor)
- w2:{bpm:124,bass:'walk',drums:'light',arp:true,
-  ch:[[43,'maj'],[40,'min'],[48,'maj'],[50,'maj'],[43,'maj'],[47,'min'],[48,'maj'],[50,'maj']],
-  bars:[
-   'g5 . b5 d6 . b5 g5 . b5 . d6 . g6 - - .',
-   'e5 . g5 b5 . g5 e5 . g5 . b5 . e6 - - .',
-   'c5 . e5 g5 . e5 c5 . e5 . g5 . c6 - - .',
-   'd5 . f#5 a5 . f#5 d5 . f#5 . a5 . d6 - c#6 .',
-   'b5 - d6 - g6 - d6 - b5 . d6 . g6 - - .',
-   'b5 . d6 f#6 . d6 b5 . d6 . f#6 . b6 - - .',
-   'c6 - e6 - g6 - e6 - c6 . e6 . g6 - e6 .',
-   'a5 . d6 . f#6 - - . e6 . d6 . a5 - - .']},
- // Mundo 3: Pantano de la Ambigüedad (inquietante, mi menor)
- w3:{bpm:84,bass:'pedal',drums:'sparse',arp:false,
-  ch:[[40,'min'],[40,'min'],[48,'maj'],[47,'maj'],[40,'min'],[48,'maj'],[45,'min'],[47,'maj']],
-  bars:[
-   'e5 - - - g5 - f#5 - e5 - - - b4 - - .',
-   'b5 - - - a#5 - a5 - g5 - - - f#5 - - .',
-   'c6 - - - b5 - - - g5 - - - e5 - d#5 -',
-   'd#5 - f#5 - b5 - - - a5 - f#5 - d#5 - - .',
-   'e6 - - - d#6 - - - e6 - - - b5 - g5 -',
-   'g5 - e5 - c5 - e5 - g5 - c6 - b5 - - .',
-   'a5 - - - c6 - - - e6 - d#6 - e6 - - .',
-   'd#6 - - - f#6 - - - b5 - - - . . b5 a#5']},
- // Mundo 4: Cumbre de las Causas (épica, la menor)
- w4:{bpm:164,bass:'oct',drums:'four',arp:true,
-  ch:[[45,'min'],[41,'maj'],[48,'maj'],[43,'maj'],[45,'min'],[41,'maj'],[43,'maj'],[52,'maj']],
-  bars:[
-   'a5 e6 a6 e6 c6 e6 a6 e6 a5 e6 a6 c7 - - a6 .',
-   'f5 c6 f6 c6 a5 c6 f6 c6 f5 c6 f6 a6 - - f6 .',
-   'g5 c6 e6 c6 g5 c6 e6 c6 g5 c6 e6 g6 - - e6 .',
-   'g5 b5 d6 b5 g5 b5 d6 b5 d6 g6 b6 g6 - - d6 .',
-   'e6 - - e6 a6 - - a6 c7 - - . b6 - a6 .',
-   'c6 - - c6 f6 - - f6 a6 - - . g6 - f6 .',
-   'd6 - - d6 g6 - - g6 b6 - - . a6 - g6 .',
-   'b5 - e6 - g#6 - b6 - e7 - - - . . b6 g#6']},
- // Jefe: La columna del domingo (frenética, mi menor)
- boss:{bpm:176,bass:'pulse',drums:'four',arp:false,
-  ch:[[40,'min'],[48,'maj'],[50,'maj'],[47,'maj'],[40,'min'],[48,'maj'],[50,'maj'],[47,'maj']],
-  bars:[
-   'e5 e5 . e5 g5 . e5 . b5 . e5 . a5 g5 f#5 .',
-   'c6 c6 . c6 b5 . g5 . e5 . g5 . c6 - b5 .',
-   'd6 d6 . d6 f#6 . d6 . a5 . d6 . f#6 e6 d6 .',
-   'd#6 d#6 . d#6 f#6 . b5 . d#6 . f#6 . b6 - a#5 .',
-   'b5 - e6 - g6 - b6 - a6 - g6 - f#6 - e6 -',
-   'g6 - e6 - c6 - e6 - g6 - c7 - b6 - g6 -',
-   'a6 - f#6 - d6 - f#6 - a6 - d7 - c#7 - a6 -',
-   'f#6 f#6 f#6 . d#6 d#6 d#6 . b5 b5 b5 . a#5 . b5 .']},
- // Falacidex: coleccionista (fa mayor, amable)
- dex:{bpm:100,bass:'walk',drums:'light',arp:true,
-  ch:[[41,'maj'],[38,'min'],[46,'maj'],[48,'maj'],[41,'maj'],[45,'min'],[46,'maj'],[48,'maj']],
-  bars:[
-   'a5 - - c6 - - a5 - f5 - - a5 - - c6 -',
-   'd6 - - a5 - - f5 - a5 - - d6 - - - .',
-   'd6 - - f6 - - d6 - a#5 - - d6 - - f6 -',
-   'e6 - - g6 - - e6 - c6 - - g5 - - - .',
-   'c6 - - f6 - - a6 - g6 - - f6 - - c6 -',
-   'e6 - - c6 - - a5 - c6 - - e6 - - - .',
-   'd6 - - f6 - - a#6 - a6 - - f6 - - d6 -',
-   'g6 - - e6 - - c6 - d6 - e6 - f6 - g6 .']},
-
- // aventura: tema heroico (A) y pasaje de carrera menor (B)
+ // tema principal
  menu:{bpm:140,bass:'adv',drums:'adv',arp:true,
   ch:[[48,'maj'],[43,'maj'],[45,'min'],[41,'maj'],[48,'maj'],[43,'maj'],[41,'maj'],[43,'maj'],[45,'min'],[41,'maj'],[48,'maj'],[43,'maj'],[45,'min'],[50,'min'],[52,'maj'],[43,'maj']],
   bars:[
@@ -902,38 +823,18 @@ const TRACKS={
    'd6 - f6 - a6 - g6 - f6 - d6 - f6 - a5 .',
    'e6 - g#6 - b6 - a6 - g#6 - e6 - g#5 - b5 .',
    'd6 . g6 . b6 - - . a6 . g6 . d6 - - .']},
- // preguntas: la menor, pulso insistente
- quiz:{bpm:152,bass:'drive',drums:'drive',arp:false,
-  ch:[[45,'min'],[45,'min'],[41,'maj'],[43,'maj'],[45,'min'],[45,'min'],[50,'min'],[52,'maj'],[45,'min'],[41,'maj'],[43,'maj'],[45,'min'],[41,'maj'],[43,'maj'],[52,'maj'],[52,'maj']],
+ // jefe: La columna del domingo (frenética, mi menor)
+ boss:{bpm:176,bass:'pulse',drums:'four',arp:false,
+  ch:[[40,'min'],[48,'maj'],[50,'maj'],[47,'maj'],[40,'min'],[48,'maj'],[50,'maj'],[47,'maj']],
   bars:[
-   'a5 . . a5 c6 . a5 . e5 . . . a5 . . .',
-   'e5 . . e5 a5 . e5 . c5 . . . e5 . . .',
-   'f5 . . f5 a5 . f5 . c5 . . . f5 . . .',
-   'g5 . . g5 b5 . g5 . d5 . . . b5 . d6 .',
-   'c6 - b5 - a5 - e5 - a5 - c6 - e6 - c6 .',
-   'b5 - a5 - g5 - e5 - g5 - a5 - c6 - a5 .',
-   'd6 - c6 - a5 - f5 - a5 - d6 - f6 - d6 .',
-   'e6 - d6 - b5 - g#5 - b5 - e6 - g#6 - b5 .',
-   'a5 a5 . a5 c6 . e6 . a5 a5 . a5 c6 . e6 .',
-   'f5 f5 . f5 a5 . c6 . f5 f5 . f5 a5 . c6 .',
-   'g5 g5 . g5 b5 . d6 . g5 g5 . g5 b5 . d6 .',
-   'a5 . c6 . e6 - - - a6 - - - e6 - - .',
-   'c6 - - a5 f5 - - a5 c6 - - e6 d6 - c6 .',
-   'b5 - - g5 d5 - - g5 b5 - - d6 c6 - b5 .',
-   'g#5 - b5 - e6 - b5 - g#5 - b5 - e6 - g#6 -',
-   'a6 - - - . . e6 e6 d6 d6 b5 b5 g#5 - - .']},
- // clases: el sabio, tranquilo y solemne
- sage:{bpm:92,bass:'slow',drums:'none',arp:true,
-  ch:[[50,'min'],[48,'maj'],[46,'maj'],[45,'maj'],[50,'min'],[48,'maj'],[43,'min'],[45,'maj']],
-  bars:[
-   'd5 - - - f5 - - - a5 - - - f5 - - -',
-   'e5 - - - g5 - - - c6 - - - g5 - - -',
-   'd5 - - - f5 - - - a#5 - - - f5 - - -',
-   'c#5 - - - e5 - - - a5 - - - e5 - - -',
-   'a5 - - - f5 - d5 - f5 - - - a5 - - -',
-   'g5 - - - e5 - c5 - e5 - - - g5 - - -',
-   'g5 - - - a#5 - - - d6 - - - a#5 - g5 -',
-   'e5 - - - c#5 - - - a4 - - - c#5 - e5 .']}
+   'e5 e5 . e5 g5 . e5 . b5 . e5 . a5 g5 f#5 .',
+   'c6 c6 . c6 b5 . g5 . e5 . g5 . c6 - b5 .',
+   'd6 d6 . d6 f#6 . d6 . a5 . d6 . f#6 e6 d6 .',
+   'd#6 d#6 . d#6 f#6 . b5 . d#6 . f#6 . b6 - a#5 .',
+   'b5 - e6 - g6 - b6 - a6 - g6 - f#6 - e6 -',
+   'g6 - e6 - c6 - e6 - g6 - c7 - b6 - g6 -',
+   'a6 - f#6 - d6 - f#6 - a6 - d7 - c#7 - a6 -',
+   'f#6 f#6 f#6 . d#6 d#6 d#6 . b5 b5 b5 . a#5 . b5 .']}
 };
 
 /* Falacia Advance — sonido sintetizado estilo GBA: ondas de pulso, eco, vibrato, segunda voz y batería.
@@ -984,83 +885,84 @@ const DRUM = {
   none: null
 };
 
-/* canciones nuevas de esta versión */
+/* Relámpago tiene su propia canción (y el jefe la suya, en songs.js) */
+TRACKS.flash = { bpm: 162, bass: 'pulse', drums: 'four', arp: false, lead: 'p25', lv: 0.045, echo: 0.14,
+  ch: [[50, 'min'], [46, 'maj'], [48, 'maj'], [45, 'maj'], [50, 'min'], [46, 'maj'], [48, 'maj'], [45, 'maj']],
+  bars: [
+    'd6 . d6 . a5 . d6 . f6 . d6 . a5 . f5 .',
+    'd6 . d6 . a#5 . d6 . f6 . d6 . a#5 . f5 .',
+    'e6 . e6 . c6 . e6 . g6 . e6 . c6 . g5 .',
+    'e6 . c#6 . a5 . c#6 . e6 . a6 . g6 . e6 .',
+    'f6 e6 d6 . a5 . d6 . f6 e6 d6 . a6 . f6 .',
+    'f6 d6 a#5 . f5 . a#5 . d6 f6 a#6 . f6 . d6 .',
+    'g6 e6 c6 . g5 . c6 . e6 g6 c7 . g6 . e6 .',
+    'a6 - g6 - e6 - c#6 - a5 - c#6 - e6 - a6 .'] };
+Object.assign(TRACKS.boss, { bpm: 155, lead: 'square', lv: 0.04, harm: 1, echo: 0.12 });
+
+/* ---------- variaciones del tema ----------
+   Todas las demás secciones tocan el mismo tema (TRACKS.menu) transformado:
+   sect  qué compases y en qué orden (A = 0-7, B = 8-15)
+   tr    transporte en semitonos
+   minor pasa el tema al modo menor paralelo (baja la 3.ª, la 6.ª y la 7.ª) y reármoniza
+   thin  deja solo las notas que caen cada «thin» semicorcheas (melodía más pausada)
+   y el resto son el tempo y los instrumentos. */
+const NAMES = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
+const MINOR = { 4: 3, 9: 8, 11: 10 };
+const MINCH = { 0: [0, 'min'], 7: [0, 'min'], 5: [0, 'min'], 9: [-1, 'maj'], 2: [-4, 'maj'], 4: [-8, 'maj'] };   // acorde según su fundamental
+const SECT = { A: [0, 1, 2, 3, 4, 5, 6, 7], B: [8, 9, 10, 11, 12, 13, 14, 15] };
+SECT.AB = SECT.A.concat(SECT.B); SECT.BA = SECT.B.concat(SECT.A);
+function vary(base, o) {
+  const pick = Array.isArray(o.sect) ? o.sect : SECT[o.sect || 'AB'], tr = o.tr || 0;
+  const note = tok => {
+    if (tok === '-' || tok === '.') return tok;
+    let m = parseBar(tok)[0][0];
+    if (o.minor && MINOR[m % 12] != null) m += MINOR[m % 12] - m % 12;
+    m += tr;
+    return NAMES[m % 12] + (Math.floor(m / 12) - 1);
+  };
+  const bars = pick.map(i => base.bars[i].split(' ').filter(Boolean)
+    .map((t, j) => (o.thin && j % o.thin ? '-' : t)).map(note).join(' '));   // lo que cae fuera de la rejilla alarga la nota anterior
+  const ch = pick.map(i => {
+    let r = base.ch[i][0], ty = base.ch[i][1];
+    if (o.minor && MINCH[r % 12]) { ty = MINCH[r % 12][1]; r += MINCH[r % 12][0]; }
+    r += tr;
+    while (r > 52) r -= 12;
+    while (r < 38) r += 12;
+    return [r, ty];
+  });
+  return Object.assign({ bars, ch, arp: true }, o.set);
+}
+Object.assign(TRACKS.menu, { bpm: 118, lead: 'square', lv: 0.042, harm: 1, echo: 0.3, arpW: 'triangle', av: 0.03, drums: 'light' });
+const THEME = TRACKS.menu;
 Object.assign(TRACKS, {
-  title: { bpm: 126, bass: 'adv', drums: 'adv', arp: true,
-    ch: [[48, 'maj'], [45, 'min'], [41, 'maj'], [43, 'maj'], [48, 'maj'], [40, 'min'], [41, 'maj'], [43, 'maj']],
-    bars: [
-      'c5 - e5 - g5 - c6 - - - g5 - e5 - g5 -',
-      'a5 - - - e5 - c5 - e5 - a5 - c6 - - .',
-      'a5 - c6 - f6 - - - e6 - c6 - a5 - c6 -',
-      'b5 - - - d6 - b5 - g5 - - - d5 - g5 .',
-      'e6 - - - d6 - c6 - g5 - c6 - e6 - g6 -',
-      'g6 - - - e6 - b5 - e6 - - - b5 - g5 .',
-      'a5 - c6 - f6 - a6 - g6 - f6 - e6 - c6 -',
-      'd6 - - - b5 - d6 - g6 - - - - - . .'] },
-  map: { bpm: 118, bass: 'walk', drums: 'light', arp: true,
-    ch: [[43, 'maj'], [50, 'maj'], [40, 'min'], [48, 'maj'], [43, 'maj'], [50, 'maj'], [48, 'maj'], [50, 'maj']],
-    bars: [
-      'b5 . d6 . g6 - - . d6 . b5 . d6 - - .',
-      'a5 . d6 . f#6 - - . d6 . a5 . d6 - - .',
-      'g5 . b5 . e6 - - . b5 . g5 . b5 - - .',
-      'e5 . g5 . c6 - - . g5 . e5 . g5 - a5 .',
-      'b5 - d6 - g6 - b6 - a6 - g6 - d6 - b5 -',
-      'a5 - d6 - f#6 - a6 - g6 - f#6 - d6 - a5 -',
-      'g5 - c6 - e6 - g6 - f#6 - e6 - c6 - e6 -',
-      'd6 - - - a5 - - - f#5 - a5 - d6 - - .'] },
-  flash: { bpm: 184, bass: 'pulse', drums: 'four', arp: false,
-    ch: [[50, 'min'], [46, 'maj'], [48, 'maj'], [45, 'maj'], [50, 'min'], [46, 'maj'], [48, 'maj'], [45, 'maj']],
-    bars: [
-      'd6 . d6 . a5 . d6 . f6 . d6 . a5 . f5 .',
-      'd6 . d6 . a#5 . d6 . f6 . d6 . a#5 . f5 .',
-      'e6 . e6 . c6 . e6 . g6 . e6 . c6 . g5 .',
-      'e6 . c#6 . a5 . c#6 . e6 . a6 . g6 . e6 .',
-      'f6 e6 d6 . a5 . d6 . f6 e6 d6 . a6 . f6 .',
-      'f6 d6 a#5 . f5 . a#5 . d6 f6 a#6 . f6 . d6 .',
-      'g6 e6 c6 . g5 . c6 . e6 g6 c7 . g6 . e6 .',
-      'a6 - g6 - e6 - c#6 - a5 - c#6 - e6 - a6 .'] },
-  win: { bpm: 132, bass: 'adv', drums: 'adv', arp: true,
-    ch: [[41, 'maj'], [48, 'maj'], [50, 'min'], [46, 'maj'], [41, 'maj'], [48, 'maj'], [46, 'maj'], [48, 'maj']],
-    bars: [
-      'c6 . f6 . a6 - - . g6 . f6 . c6 - - .',
-      'e6 . g6 . c7 - - . b6 . g6 . e6 - - .',
-      'd6 . f6 . a6 - - . g6 . f6 . d6 - f6 .',
-      'd6 . f6 . a#6 - - . a6 . f6 . d6 - - .',
-      'a6 - - a6 c7 - a6 - f6 - - f6 a6 - c7 -',
-      'g6 - - g6 c7 - g6 - e6 - - e6 g6 - c7 -',
-      'f6 - - f6 a#6 - f6 - d6 - - d6 f6 - a#6 -',
-      'c7 - - - g6 - e6 - c6 - e6 - g6 - c7 .'] },
-  over: { bpm: 76, bass: 'slow', drums: 'none', arp: true,
-    ch: [[45, 'min'], [41, 'maj'], [50, 'min'], [52, 'maj']],
-    bars: [
-      'e5 - - - c5 - - - a4 - - - c5 - - -',
-      'f5 - - - c5 - - - a4 - - - c5 - - -',
-      'd5 - - - f5 - - - a5 - - - f5 - - -',
-      'e5 - - - g#4 - - - b4 - - - e5 - - .'] }
+  /* portada: el tema entero, solemne */
+  title: vary(THEME, { sect: 'AB', set: { bpm: 104, lead: 'square', lv: 0.042, harm: 1, bass: 'adv', drums: 'adv', arpW: 'triangle', av: 0.03, echo: 0.32 } }),
+  /* mapa de mundos: solo la parte A, en fa, de paseo */
+  map: vary(THEME, { sect: 'A', tr: 5, set: { bpm: 108, lead: 'p25', lv: 0.045, bass: 'walk', drums: 'light', arpW: 'triangle', av: 0.034, echo: 0.28 } }),
+  /* Fortaleza Formal: en re menor, a paso de marcha */
+  w1: vary(THEME, { sect: 'AB', minor: 1, tr: 2, set: { bpm: 100, lead: 'square', lv: 0.042, harm: 1, bass: 'walk', drums: 'march', arpW: 'triangle', av: 0.03, echo: 0.2 } }),
+  /* Bosque de la Relevancia: en sol, pastoral */
+  w2: vary(THEME, { sect: 'AB', tr: -5, set: { bpm: 108, lead: 'p25', lv: 0.048, bass: 'walk', drums: 'light', arpW: 'triangle', av: 0.036, echo: 0.28 } }),
+  /* Pantano de la Ambigüedad: en la menor, lenta, empezando por la parte B */
+  w3: vary(THEME, { sect: 'BA', minor: 1, tr: -3, thin: 2, set: { bpm: 78, lead: 'triangle', lv: 0.095, bass: 'pedal', drums: 'sparse', arp: false, echo: 0.46 } }),
+  /* Cumbre de las Causas: en re mayor, con empuje */
+  w4: vary(THEME, { sect: 'BA', tr: 2, set: { bpm: 122, lead: 'square', lv: 0.042, harm: 1, bass: 'oct', drums: 'adv', arpW: 'triangle', av: 0.03, echo: 0.2 } }),
+  /* torneo: en la menor, insistente */
+  quiz: vary(THEME, { sect: 'AB', minor: 1, tr: -3, set: { bpm: 120, lead: 'p25', lv: 0.045, harm: 1, bass: 'drive', drums: 'drive', arp: false, echo: 0.15 } }),
+  /* clases del sabio: la parte A en fa, pausada y sin batería */
+  sage: vary(THEME, { sect: 'A', tr: 5, thin: 2, set: { bpm: 84, lead: 'triangle', lv: 0.09, bass: 'slow', drums: 'none', arpW: 'sine', av: 0.042, echo: 0.42 } }),
+  /* falacidex: en si bemol, amable */
+  dex: vary(THEME, { sect: 'A', tr: -2, set: { bpm: 96, lead: 'p25', lv: 0.045, bass: 'walk', drums: 'light', arpW: 'triangle', av: 0.036, echo: 0.3 } }),
+  /* perfil: empieza por la parte B, en la bemol */
+  perfil: vary(THEME, { sect: 'BA', tr: -4, set: { bpm: 100, lead: 'triangle', lv: 0.09, bass: 'adv', drums: 'light', arpW: 'triangle', av: 0.034, echo: 0.3 } }),
+  /* victoria: la parte A en mi mayor, más rápida */
+  win: vary(THEME, { sect: 'A', tr: 4, set: { bpm: 126, lead: 'square', lv: 0.042, harm: 1, bass: 'adv', drums: 'adv', arpW: 'triangle', av: 0.03, echo: 0.24 } }),
+  /* sin vidas: cuatro compases en do menor, muy lentos */
+  over: vary(THEME, { sect: [0, 1, 2, 3], minor: 1, thin: 4, set: { bpm: 66, lead: 'triangle', lv: 0.09, bass: 'slow', drums: 'none', arpW: 'sine', av: 0.04, echo: 0.5 } })
 });
-/* timbre de cada canción: lead = onda de la melodía · harm = segunda voz · echo = cantidad de eco */
-const VOICING = {
-  title: { lead: 'p25', harm: 1, echo: 0.26 },
-  menu: { lead: 'square', lv: 0.042, harm: 1, echo: 0.3, arpW: 'triangle', av: 0.03, drums: 'light' },
-  map: { lead: 'p12', lv: 0.055, arpW: 'triangle', av: 0.036, echo: 0.28 },
-  w1: { lead: 'p25', harm: 1, echo: 0.18 },
-  w2: { lead: 'p12', lv: 0.058, arpW: 'triangle', av: 0.036, echo: 0.26 },
-  w3: { lead: 'triangle', lv: 0.095, echo: 0.46 },
-  w4: { lead: 'p25', harm: 1, echo: 0.2 },
-  boss: { lead: 'square', lv: 0.04, harm: 1, echo: 0.12 },
-  quiz: { lead: 'p25', harm: 1, echo: 0.15 },
-  flash: { lead: 'p25', lv: 0.045, echo: 0.14 },
-  sage: { lead: 'triangle', lv: 0.09, arpW: 'sine', av: 0.042, echo: 0.42 },
-  dex: { lead: 'p12', lv: 0.055, arpW: 'triangle', av: 0.036, echo: 0.3 },
-  win: { lead: 'p25', harm: 1, echo: 0.24 },
-  over: { lead: 'triangle', lv: 0.09, arpW: 'sine', av: 0.04, echo: 0.5 }
-};
-Object.keys(VOICING).forEach(k => Object.assign(TRACKS[k], VOICING[k]));
-/* todo un poco más tranquilo: tempo más lento (Relámpago y el jefe bajan menos, para que sigan apurando) */
-Object.keys(TRACKS).forEach(k => { TRACKS[k].bpm = Math.round(TRACKS[k].bpm * (k === 'flash' || k === 'boss' ? 0.88 : 0.84)); });
-/* versión tranquila de cada mundo, para la mini-clase */
+/* versión tranquila de la variación de cada mundo, para su mini-clase */
 for (let i = 1; i <= 4; i++) {
-  TRACKS['w' + i + 'c'] = Object.assign({}, TRACKS['w' + i], { bpm: Math.round(TRACKS['w' + i].bpm * 0.84), lead: 'triangle', lv: 0.09, harm: 0, arp: true, arpW: 'sine', av: 0.04, bass: 'slow', drums: 'none', echo: 0.4 });
+  TRACKS['w' + i + 'c'] = Object.assign({}, TRACKS['w' + i], { bpm: Math.round(TRACKS['w' + i].bpm * 0.86), lead: 'triangle', lv: 0.09, harm: 0, arp: true, arpW: 'sine', av: 0.04, bass: 'slow', drums: 'none', echo: 0.4 });
 }
 
 function compile(def) {
@@ -1828,11 +1730,20 @@ function theme() {
   }
   return 'menu';
 }
-/* una sola canción para todo el juego; solo Relámpago y el jefe tienen la suya */
+/* cada sección toca una variación del mismo tema; solo Relámpago y el jefe tienen canción propia */
 function song() {
-  if (V.scr === 'flash') return 'flash';
-  if (V.scr === 'lesson' && V.boss) return 'boss';
-  if (run && run.mode === 'boss' && (V.scr === 'quiz' || V.scr === 'feedback' || V.scr === 'pause')) return 'boss';
+  switch (V.scr) {
+    case 'title': return 'title';
+    case 'worlds': return 'map';
+    case 'lesson': return V.boss ? 'boss' : 'w' + V.w + 'c';
+    case 'quiz': case 'feedback': case 'pause': return run.song;
+    case 'result': case 'flashend': return 'win';
+    case 'gameover': return 'over';
+    case 'clases': case 'clase': return 'sage';
+    case 'dex': case 'dexd': return 'dex';
+    case 'perfil': return 'perfil';
+    case 'flash': return 'flash';
+  }
   return 'menu';
 }
 function setTheme(t) { app.className = app.className.replace(/\bt-\S+/, 't-' + t); }
