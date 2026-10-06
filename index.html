@@ -271,13 +271,13 @@ i { font-style: normal; }
 .cards { display: grid; grid-template-columns: 1fr 1fr; gap: .2em .35em; }
 .narrow .cards { grid-template-columns: 1fr; }
 .card { padding: .4em .6em; gap: .65em; }
-.card .ico { width: 3em; height: 3em; flex: none; }
+.card .ico { width: 3.2em; height: 3.2em; flex: none; }
 .card .nm { font-size: 1.08em; }
 .stars { color: var(--hi-lo); letter-spacing: .08em; white-space: nowrap; }
 .stars i { color: var(--btn-lo); }
 .opt.sel .stars { color: var(--pri); }
 .opt.sel .stars i { color: var(--hi-lo); }
-.narrow .card .ico { width: 2.2em; height: 2.2em; }
+.narrow .card .ico { width: 2.6em; height: 2.6em; }
 
 /* ---------- pregunta ---------- */
 .qrow { display: flex; gap: .45em; align-items: stretch; flex: 1 1 auto; min-height: 0; }
@@ -504,7 +504,7 @@ i.h { visibility: hidden; }
   </aside>
 </div>
 <script>
-/* Figuras del juego: SILO, el sabio y el jefe. Generadas con PixelLab y pasadas a paleta por
+/* Figuras del juego: SILO, el sabio, el jefe y los iconos de los mundos. Generadas con PixelLab y pasadas a paleta por
    tools/avatars.py desde art/*.png. No editar a mano: cambiar el PNG y volver a correr la herramienta. */
 const SPRITES = {
   silo: { w: 48, h: 48, pal: ['#000000', '#c3071a', '#c7b781', '#5a555c', '#f2d351', '#efe9dc', '#f2d24e', '#f3d450', '#ca7110', '#223560', '#1c204e', '#22345f', '#1b1f4c', '#8ac7eb', '#cd7211', '#bb680c', '#2b3d69', '#10121f', '#b18a5f'],
@@ -512,11 +512,19 @@ const SPRITES = {
   sabio: { w: 48, h: 48, pal: ['#000102', '#000001', '#b75240', '#010102', '#f2c289', '#ec916b', '#c66d3a', '#000002', '#020102', '#b05135', '#e8eae7', '#000000', '#606d84', '#7d8b9e', '#d4cdab', '#9fb0be', '#8999aa', '#fbfdfc', '#f9fbfb', '#233e74', '#010001', '#182952', '#010101', '#203c74', '#2d7eb9'],
     px: '.....................................................................AAAAA...................................BA...BABCCCCCAAA..DD........................BD.DEB.DACFFFFFFFFCCADDEA..B....................BGADEHBDCGFEEEEEFFFIICDEDAGD....................DEAAJAGEHFEKKEEEEFBKGHDJDAEA..................ABDGEBJAGGBKKKKEEEEEBGGGDJBEGDDB................BEBBGEHDDHEKKKKEEEEEFAHHHBEGADEB................AJEBGBGKEDEKKKEEEEEEFFAEKGBGBEGB................AAJGBGGHABEEEEEEEEEFFFAAAGGBGGAA................BEBAJAACFFEEEGGGGGGEEFFGCBAJDAEB................LGGDBMCCFFFGGEEEEEEGGFFGCCMADGJB.................BADNNCCFEEFEGGGGCCFFEFGCCNNDDB....................BOPCCNNNNQFFFFFFNNNQQMCNPPB....................LQRPNMRRRRRNNFFNNSSSRRNANPRPB..................LKRPNTSNNNKRKMFFMSSKNNNKSBNORPB................LKRPNMPNBBBDMMCFFCMMDUHDNPPNNNROL..............BKRNMQMBACAVIACCGGCCAWVDCBHBNPNNRKB.............BKNNMNMMCBPXUPBCGGCLPLXPBCMMNNPNNKB.............BPNDFCANCCRYYRCGEEGCRYYRCCMDCFAPTQB..............BMAFCAMGFCCCGGFKEFGGCCCFCMDCFAPPM................NBFFAMCFEEEFCFEEFCEEEEFCMDFFBPKPL..............BPPBFAQMCFFQQOBCCLPNNFFCNNDFBMMRRPB.............BKQMBDOPMCQSRSPNNPKSSMCMPPBAMPMMRRQB...........BSRMMMWOPPMSSNNNNNNNNKSMPNPNDMPPMMRQB...........BRNQQMDPMKMSQBHBBHBBBNSMKQPPDMPMNQKQL...........BPNTQMDPPRMPBMCFFFFCMBPQSQNPWMPPMQQB............BPQPMMIMPADANPPMQPMPPMUDARNMDAMPPPB..............BPPAIUMQRSPNKKQKKNPKQMPSRNMBTVUPQB...............BUTTWMNPRPORPKRROMRKNPRPNMVXVTDH................WWTYVWMPKQRRPRRRRPRROQKPNBXXVTVB...............LTVXYVXAPPQKSSRRSSRPROQQQBVXXVYUTL.............LXYXBYVXTDPMKSKRRRSSPROMQBVVTVXYUTXL...........BXYYYUYXXXBNMQSNSRRSRPRNMQWXXYXYYBYXXD..........WXYYYWYYXYXUMMPNPRSOPPPMMBXXYYXYUXYYXB..........DXYYYBYYXYYTIMNPNORPMPNMBXXYYXYYIXYYXW..........AXYYXXIYYVYXWDMPMPPPMPNBXXYYYXYYWXYXXB...........BXXXXWYYIEDYXWDMPPPMMBXXYYYXYYWXXXXB.............BXXXXIIEAEGIXWDMQMWBXXYYYYXYYUXXVB...............LXXXIYYYEYYXXIMQAXXXYYYYXYYYVXVB.................BXXXDYGAEVXXXDDXXXYYYYXXYYVXXB...................AXXXBXYBYYXWGGVXYYYYXVYYXXXB.....................BXXXXXXYYDGEXXYYYYXVXYXXID.......................ADXXXXXDEEXYYYYYXVXXXXID..........................BDXXIGGXYYYYYXVXXXDB..............................BDDDXXXXXXXXDDWD....................................BDDDDADA....................................................................' },
   jefe: { w: 48, h: 48, pal: ['#000000', '#847063', '#cdb4a9', '#b4968c', '#a7877e', '#ebdbce', '#ecddd0', '#dac7ba', '#4f5047', '#8f7b6f', '#483f3d', '#1e1d19', '#cbbcaa', '#8e6660', '#a78d7e', '#b39b8d', '#aa9181', '#a98e80', '#bda796', '#ffffff', '#b22f35', '#822733', '#704f41', '#e43e3b'],
-    px: '........AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.................ABCCCCCCCCCCCCCCCCCCCCCCCCCCCCCAAA............AABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBDCAA.........AEFFGFGGFGGGGGFGGHGGGIGGGGGHGGFFGGFBDCBA........AFFFFAGAEFHGGAGAIJBGKLKAGGAAAAGAAAAFBDCA........AFFGACFCGGMHAAGGGAGGAAAAAAAFAJGAMAAGBDCA........AGFAGAGAGFAAAKGGGAGGFAAGGGAFAAGAAAAGBDCA........AFFAAAGAAGAAGAGGGAFGAAAGGGAGAFGAGAFGBDCA........AFFFGGGGGGGGGGFGGFFFFGGGGGGGGFGGFGGGBDCA........AHFKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKFBBCA........ANFKKHKHKKGKHKKKHKKKHKGKKKKKKHKGKKKFBBCA.........AGKKGKHKKGKGKKKGKKKFKGCKKKKKGKGCKKFBBCA.........AFKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKGBBCA.........AFFGGGGGFBFFFFFGGGFFFGGFFFFFFFFGFFFBBCA.........AFOOOPQQBFAAFGOPORQQQOQFFAANCFFOOFFBBCA.........AFFFGGGGBAAAAFFFFFGGFFGFAAAANFFGGGFBBCA.........AFQPOROFFAAAAAFOOGOOQFFAAAAANGOOOFFBRA..........AHFGGGGFEJAAAAAFFFFFFFAAAAANNFFFGFFBRA..........ANFPRGOREAHSAAAAFFNFFAAAASHANCFOQSGBRA...........AGGGGGFAMTTMAAAANDNAAAAMTTMACFFGGFBRA...........AFORQFFAMTTUVVAAWDWAAUVVTTMACFOQQFBRA...........AFFFGGFAMTTXXVSAHHCASXXVTTSACGFGFFBOA..........AAAFSOOQEASTTXXMAOOCAMTXXTSANNNJSFAAAA.........AFFANFFFFEEASFFSAECFCCASGGSANNFFFFFAFFFA.......ACFPJAFCAAGCCAAAADFFFFCCAAAADCFFAAFAJDFFA.......ACRAAAFCAAAFFFERFPPOGOOQFFGGFGAAAAFAAARFRA.....AJRRQOARRRAAAAAAHFFFFFFFGNNNAAAAAANFAQQQQRJA....AJUAAAGFGDAAACCCANFFFAFFFNAASCNAAANFFAAAWNBA....AJUUAFOGOHEAACGCAAFFAAAFFAAAHHAAAAFOQFBAUNNA....AWUUAFGGGFDAAAGAAAFFAAAFFAAAGHAAACFFFFBAUUWA.....AAAAGOORRGNAAAAAAAAAAAAAAAAAAAAAROOOFBAAAA.........AFGFFGGNAAAAAAAAAAAAAAAAAAAAAFFFGFBA............AFOORROFAAAAAVVVAAAAVVVAAAAANRFOQGBBA...........AFGFFGFFEAAAVUUUVVVVUUUVVAAACFFFFGBBA...........AGSQQQORGAAVUXXXXUXXXXXUVVAOOOQOFFBBA...........AFFFFFFGFGAVUXXXXXXXXXXXUAFGFGFGFFBBA..........ANGOOGOORQQFNAAAAAAAAAAAANGOOOOGOFBBBA..........AFFGGGFGGGGFFGGGGGGGGFFGGGFFGGGFFGBEBA..........AFQSRRRRQQSFFORQSGQRQFFORQSQOOORSFBEBRA.........AFGGGFFGFGGGFFGGFFFFFFGFFFFGGGGFGFBEBRA.........AFQRRQQGOQQFGRQQOOORQPFFORRRQQGORFBEBRA........AFFFGFFGFGGGFFFGGFFFFFGFFFFFGGGFFFFBEBRA........AFFQQGORRQQPGRSPSRQGRRQGRGQGQQOGOOGBEBRA........AFFFGGFFFFFGGFFFGFGFFFGGFFGGFGGFFFGBEBRA........AFFOOOORRGORGOOORRRGOORFOOOOOOOFOOGBEBBA........ANCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCBEEA..........ANCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCBA............AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.......' }
+    px: '........AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.................ABCCCCCCCCCCCCCCCCCCCCCCCCCCCCCAAA............AABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBDCAA.........AEFFGFGGFGGGGGFGGHGGGIGGGGGHGGFFGGFBDCBA........AFFFFAGAEFHGGAGAIJBGKLKAGGAAAAGAAAAFBDCA........AFFGACFCGGMHAAGGGAGGAAAAAAAFAJGAMAAGBDCA........AGFAGAGAGFAAAKGGGAGGFAAGGGAFAAGAAAAGBDCA........AFFAAAGAAGAAGAGGGAFGAAAGGGAGAFGAGAFGBDCA........AFFFGGGGGGGGGGFGGFFFFGGGGGGGGFGGFGGGBDCA........AHFKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKFBBCA........ANFKKHKHKKGKHKKKHKKKHKGKKKKKKHKGKKKFBBCA.........AGKKGKHKKGKGKKKGKKKFKGCKKKKKGKGCKKFBBCA.........AFKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKGBBCA.........AFFGGGGGFBFFFFFGGGFFFGGFFFFFFFFGFFFBBCA.........AFOOOPQQBFAAFGOPORQQQOQFFAANCFFOOFFBBCA.........AFFFGGGGBAAAAFFFFFGGFFGFAAAANFFGGGFBBCA.........AFQPOROFFAAAAAFOOGOOQFFAAAAANGOOOFFBRA..........AHFGGGGFEJAAAAAFFFFFFFAAAAANNFFFGFFBRA..........ANFPRGOREAHSAAAAFFNFFAAAASHANCFOQSGBRA...........AGGGGGFAMTTMAAAANDNAAAAMTTMACFFGGFBRA...........AFORQFFAMTTUVVAAWDWAAUVVTTMACFOQQFBRA...........AFFFGGFAMTTXXVSAHHCASXXVTTSACGFGFFBOA..........AAAFSOOQEASTTXXMAOOCAMTXXTSANNNJSFAAAA.........AFFANFFFFEEASFFSAECFCCASGGSANNFFFFFAFFFA.......ACFPJAFCAAGCCAAAADFFFFCCAAAADCFFAAFAJDFFA.......ACRAAAFCAAAFFFERFPPOGOOQFFGGFGAAAAFAAARFRA.....AJRRQOARRRAAAAAAHFFFFFFFGNNNAAAAAANFAQQQQRJA....AJUAAAGFGDAAACCCANFFFAFFFNAASCNAAANFFAAAWNBA....AJUUAFOGOHEAACGCAAFFAAAFFAAAHHAAAAFOQFBAUNNA....AWUUAFGGGFDAAAGAAAFFAAAFFAAAGHAAACFFFFBAUUWA.....AAAAGOORRGNAAAAAAAAAAAAAAAAAAAAAROOOFBAAAA.........AFGFFGGNAAAAAAAAAAAAAAAAAAAAAFFFGFBA............AFOORROFAAAAAVVVAAAAVVVAAAAANRFOQGBBA...........AFGFFGFFEAAAVUUUVVVVUUUVVAAACFFFFGBBA...........AGSQQQORGAAVUXXXXUXXXXXUVVAOOOQOFFBBA...........AFFFFFFGFGAVUXXXXXXXXXXXUAFGFGFGFFBBA..........ANGOOGOORQQFNAAAAAAAAAAAANGOOOOGOFBBBA..........AFFGGGFGGGGFFGGGGGGGGFFGGGFFGGGFFGBEBA..........AFQSRRRRQQSFFORQSGQRQFFORQSQOOORSFBEBRA.........AFGGGFFGFGGGFFGGFFFFFFGFFFFGGGGFGFBEBRA.........AFQRRQQGOQQFGRQQOOORQPFFORRRQQGORFBEBRA........AFFFGFFGFGGGFFFGGFFFFFGFFFFFGGGFFFFBEBRA........AFFQQGORRQQPGRSPSRQGRRQGRGQGQQOGOOGBEBRA........AFFFGGFFFFFGGFFFGFGFFFGGFFGGFGGFFFGBEBRA........AFFOOOORRGORGOOORRRGOORFOOOOOOOFOOGBEBBA........ANCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCBEEA..........ANCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCBA............AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.......' },
+  castle: { w: 32, h: 32, pal: ['#150404', '#050308', '#000000', '#fb2064', '#9f8daf', '#5f4f7c', '#413965', '#b49eba', '#bcabc5', '#252143', '#352e57', '#f8f1f9', '#a3a7ba', '#c3b3cc', '#ece3f0', '#9a95c5', '#ded2e3', '#7d648f', '#4d4370', '#8e7da5', '#6b5585', '#978ab8', '#84819a', '#66171d', '#411322', '#9695ac', '#811e2c', '#902032'],
+    px: '...............................................................................................................AAB.............................CDDB............................CDDDC...........................CCCC.................AAA.AAA....C.....AAA.AAA.......AEFAAAGHA...C....AEFAAAGHA.....AIJFGGGGJIA..C...AIKFGGGGJIA....ALMJJJJJNOAAAPPAAALMJJJJJNOA....AQIJOONJREAFSJJSSAQNJOONJREA....ATIIONNRRFBGJPEJSATNNONNRRFA....CCJHHRRRJCCTPPTPJABJHHRRRJCC.....ASSSJJJJAAEPJJPUAASSSJJJJA......ACCCCCCCANGGOOGGNACCCCCCCA......AHHTTRUCSENNEENNNSCHHTTRUA......AHQNNVUCGGSGGKKSGGCHQNNVUA......AHQCCPUCRGMLLLLMGRCHQCCPFA......AHOCCPUCJMMCCCCMMJCHOCCPUA......AROCCPSCWMCXYXYCMMCROCCPFA......AHOTRNTCWCYXYXXYCMCHOTRNTA......AHOOINTCSCYXXXXYCSCHOOINTA......AHEESVTCZCRZWMMFCWCHEESVTA......AHONNVGCMCCXCXCCCMCHONNVJA......AGSRRGGCMCYaXXXYCMCGFRRGJA......AIISHTRCFCYbabbYCFCIISHTUA......AGIHHTGCCCCCCCCCCCCSIEHTKA........AAAAC............CAAAA.....................................................................................................' },
+  tree: { w: 32, h: 32, pal: ['#0f0e14', '#100f15', '#8ebe3d', '#8ec13d', '#c8ed66', '#619943', '#4b7558', '#8fbe40', '#8bba3e', '#121117', '#4e7658', '#4d7556', '#4d7355', '#374d4b', '#507756', '#131218', '#2a1c24', '#6c3940', '#66343c', '#c86930', '#7d4145'],
+    px: '.............................................ABBBBB........................BBCDDDDDAB....................AADDCCCCCCDDAB.................ADDCCCCCCCCEDDDA...............AFCCEECCCCEEEFCDFA.............AFDCEEDECCCDDDDCCDDA...........ADCDCCDCDCCCCCCDCDGHDA..........ACCCHCCCCCCCCCCCDGDCCDA........ADCDGDDCCCCCCDCCFGDCCCCCB.......BFGDDGFDDFDFCDCCDDCCCDGIJ.......AKDGCDDLGFDDCCDCDCCCCGDKB.......JKFDGCCDDDCCCCCDFGDFGDKKB.......BKMFDGCCCCCCCCFFFFGDDMMLJ.......ALLMMCFCCCCDFFFFFFDMMMMLJ......BDBKMMMFKFCCFFKKLLFLMLMLNJ.....BECBLLLMMLLLKKKMLNKOLKMLNP.....AEECCJNNPMLLLLLLNPNLLQLLNJJ.....BHCCCLJNNJPQNNNPPNNPJNNNJHCB....JFGCCCLJJNPRPPRRRPJRJNJJIIEHJ...JHHGCICINPPSTQRRSJTSJJFCIECHJ...JOLHLHMHLNJPSUUTSTUJJOOHKHLOJ...JNLKLKOONPJ.PUTTURP.BJOKLONPP....JJJLLOQPP..JTTTTUJ..JJJPJJJ........PQPP.PPPUTTTTUPNNNPRJ.........JJPTUJJNNRUTTRTURPNNPSPJP......JMLOUUUJPSUQTSRSTSUPJMMMLOB.....JHCHFOQTQOJTQOPOQTPLUPOCCHIP....JJOOIIHJIFJJFFCILJFTTTIHOOPJ....JJJJJJLMMCCCICHMICILMLPJJJJJ......JJJJJJJOLMLLLMMMLJJJJJJJ...........JJJJJJJJJJJJJJJJJJ.......' },
+  swamp: { w: 32, h: 32, pal: ['#4a250e', '#6b2d0f', '#934215', '#4f2910', '#000000', '#4e260e', '#512910', '#745e10', '#b99625', '#663e0e', '#92b820', '#401c09', '#038ca2', '#0799ae', '#018599', '#28601b', '#03bbd2', '#00d9fb', '#12280e', '#089db2', '#1b4049', '#060000', '#079bb1', '#018297', '#b74d6f', '#ffe8de', '#ff9216', '#552b11', '#723c10', '#0e0b25'],
+    px: '................................................A..............................BCB......................DE.....FCA....EG...............BCA.....ABA....ACA..............ABA..E...E..E..ABA..........DE..ABA..HE.EE.EI..ABA..ED.....ACD...E...EIEEHEIE...E...BCA....ABA...E..E.EIEHEIE...E...ABA....ABA.EEHEEIEEIEHEIEEEEHEE.ABA....ABAEHEHEHIHHHHJHHHHHEHEHEABA.....E.EKEHEGHDDDGDDDDHGEHEKE.E......EEEKEGGGEEEEEEEEEEDGGEKEEE.....EEEHJLEEEMNNNNNNNNNEEEJJHEEE....EIEDGEOPPPNQRRRRQNNMMMEGGEIE....EIELEOSIPKPTTUUTTOEPPPOEGEIE...EHVBEWNXEPPPTUYYUTEPPKKSWEFEHE.EHHVENNRNOOOOUYZZYUOSSSSMTNEEHHEEHHHENRNRRNWUYZaaZYUOOOORRWEHHHEEHIIEWETWWWTUUYZZYUUWWWRRETEIIHEEHHIENIEWPPSMUUYYUUOPPPTEITEIHHEEDIIIEIEPKPPSNUUUOOSKKPUEIEIIIGEEDEEIHEOSKKSSTNNNNWOSKKPXEIIIbGE.EDDIHHEUXXXNRRRRRRNOXXUVHIIDCE...EDGIHIIEEWWNWWWWWNNEEIIIEGGE.....EDBLcIIIEEEEEEEEEEIIIdGVFE.......VVLCDFLIIIIIIHIIIEIFLFVE..........VVCBLEGGEbbIEGFLFBEE..............VEVDDBAbCAGLLVVV...................VEEVCDEVVE..........................EE...............................................' },
+  peak: { w: 32, h: 32, pal: ['#191516', '#171315', '#e33d2d', '#171415', '#fcd781', '#af2a2d', '#6d3b2e', '#fafbfa', '#b4d1d3', '#8ea0b4', '#633f71', '#5b3966', '#84589a', '#ba84d2', '#9466ab', '#56355f', '#825897', '#b982d2', '#9565ad', '#7a508c', '#b17ecb', '#9162a8', '#825699', '#815696', '#684277', '#ad7ac8', '#51315b', '#ba82d5', '#b781cf'],
+    px: '..............................................................................................................AB..............................ACABD...........................ACCEFB..........................ACCFA...........................AAABB...........................AG......................BAA....AAGA....................DHHIA..BHBBIB..................AHHHHIB.BHHIIIB.................AHHHIIAAHHHHIIIB................DABAAAAAHHHHIIID......................AHHHHHJJIIA.....................DKKHHHLLIMD....................BNNOKHLOOPMQA...................BRNSKKOOOMMMA..................DRRRTUUUVLWMMXD................ANNNYZUUUYSaWMMXA...............BRNOYZZUVYSMaWMQQA.............ARNRYSZNZYbRMWaWMMAA............DNNTYbRRVYbRWMXaMWXD...........DNNTTbbRSKbbbbSWaWWQQA..........DRRSRRRNYbRRRRSWWMWMXB.........DRRRRRNcXKbRRRRSWWWXMQQA.......ARcRRRRcWXbbRRRRSSWXXWXQQA......AccccccQQRRccccVVXXXXXQXQA......DAAAAAAAAAABAAAAAABDBABBAA...................................................................................................' }
 };
 
 /* Falacia Advance — figuras: SILO (el robot) con sus emociones, el sabio, el jefe y los iconos.
-   SILO, el sabio y el jefe vienen de PixelLab (sprites.js, 48×48). La cara de SILO se dibuja aquí,
+   SILO, el sabio y el jefe (48×48) y los iconos de los mundos (32×32) vienen de PixelLab (sprites.js). La cara de SILO se dibuja aquí,
    píxel a píxel, sobre su pantalla: así una sola figura sirve para las trece emociones. */
 (function (root) {
 'use strict';
@@ -740,7 +748,7 @@ function sage(mood, cls) {
 }
 const still = (name, cls) => `<img class="${cls}" src="${toUrl(name, () => gridOf(name))}" alt="">`;
 
-/* sprites dibujados con mapas de caracteres */
+/* sprites pequeños dibujados con mapas de caracteres (los corazones) */
 function pix(rows, pal, cls) {
   const w = Math.max(...rows.map(r => r.length));
   let s = '';
@@ -757,81 +765,15 @@ function pix(rows, pal, cls) {
   return `<svg class="${cls || 'px'}" viewBox="0 0 ${w} ${rows.length}" shape-rendering="crispEdges" aria-hidden="true">${s}</svg>`;
 }
 
-const ICONS = {
-  castle: { pal: { K, S: '#d6dcf7', D: '#8a93c8', R: '#e03a2f', N: '#2a1f4d' }, rows: [
-    '.......RR.......',
-    '.......RRR......',
-    '.......K........',
-    '..KK.KK.KK.KK...',
-    '..KSKSSKSSKSK...',
-    '..KSSSSSSSSSK...',
-    '..KSSNSSSNSSK...',
-    '..KSSNSSSNSSK...',
-    '..KSSSSSSSSSK...',
-    '.KKSSSSSSSSSKK..',
-    '.KSSSSKKKSSSDK..',
-    '.KSSSKNNNKSSDK..',
-    '.KSSSKNNNKSSDK..',
-    '.KSSSKNNNKSDDK..',
-    '.KKKKKKKKKKKKK..'] },
-  tree: { pal: { G: '#5cc83c', L: '#b6f078', D: '#2f8f34', B: '#9a5a2c', K }, rows: [
-    '.....KKKKK......',
-    '...KKGGGGGKK....',
-    '..KGGLLGGGGGK...',
-    '.KGGLLGGGGGGGK..',
-    '.KGLGGGGGGDGGK..',
-    'KGGGGGGGGDDGGGK.',
-    'KGGGGGGGGGDGGGK.',
-    'KGGGDGGGGGGGGGK.',
-    '.KGGDDGGGGGGGK..',
-    '.KKGGGGGGGGGKK..',
-    '...KKKBBBKKK....',
-    '.....KBBBK......',
-    '.....KBBBK......',
-    '....KBBBBBK.....',
-    '....KKKKKKK.....'] },
-  swamp: { pal: { B: '#7a4a22', T: '#2f8f34', W: '#1fb89a', w: '#8ff0dc', L: '#5cc83c', K, P: '#ff8fa0' }, rows: [
-    '....B......B....',
-    '....B......B....',
-    '....B..B...B....',
-    '....T..B...T....',
-    '....T..B...T....',
-    '....T..T...T....',
-    '....T..T...T....',
-    'KKKKTKKTKKKTKKKK',
-    'WWWWTWWTWWWTWWWW',
-    'WwwWWWWWWWWWwwWW',
-    'WWWWLLLLLLWWWWWW',
-    'WWWLLLPLLLLWWwwW',
-    'WwWWLLLLLLWWWWWW',
-    'WWWWWWWWWWwwWWWW',
-    'KKKKKKKKKKKKKKKK'] },
-  peak: { pal: { S: '#ad6cf5', D: '#6a47b8', W, K, R: '#e03a2f' }, rows: [
-    '.......KR.......',
-    '.......KRR......',
-    '.......K........',
-    '......KWWK......',
-    '.....KWWWWK.....',
-    '.....KSWWSK.....',
-    '....KSSSSSSK....',
-    '....KSSDSSSK....',
-    '...KSSSDDSSSK...',
-    '...KSSDDSSSSK...',
-    '..KSSSDSSSSSSK..',
-    '..KSSDDSSSSSSK..',
-    '.KSSSDSSSSSSSSK.',
-    '.KSSSSSSSSSSSSK.',
-    'KKKKKKKKKKKKKKKK'] }
-};
-const HEART = ['.KK.KK.', 'KRRKRRK', 'KRWRRRK', 'KRRRRRK', '.KRRRK.', '..KRK..', '...K...'];
+const HEART = ['.KK...KK.', 'KRRK.KRRK', 'KRWRKRRRK', 'KRWRRRRRK', 'KRRRRRRDK', '.KRRRRDK.', '..KRRDK..', '...KDK...', '....K....'];
 
 const api = {
   MOODS, robot, grid, url, gridOf,
   moods: Object.keys(MOODS),
   SAGE, sage, sageGrid, sageDiff, sageMoods: Object.keys(SAGE),
   boss: cls => still('jefe', cls || 'px boss'),
-  icon: (name, cls) => pix(ICONS[name].rows, ICONS[name].pal, cls || 'px ico'),
-  heart: full => pix(HEART, full ? { K, R: '#e03a2f', W: '#ffb3a8' } : { K: '#6b6591', R: '#3a3566', W: '#3a3566' }, 'px hrt'),
+  icon: (name, cls) => still(name, cls || 'px ico'),
+  heart: full => pix(HEART, full ? { K, R: '#e8473f', W: '#ffc2b8', D: '#b02a35' } : { K: '#6b6591', R: '#3a3566', W: '#3a3566', D: '#3a3566' }, 'px hrt'),
   pix
 };
 root.FSprite = api;
