@@ -851,7 +851,6 @@ const BASS = {
   slow: r => ({ 0: [r, 6], 8: [r + 7, 6] }),
   walk: r => ({ 0: [r, 3], 4: [r + 7, 3], 8: [r + 12, 3], 12: [r + 7, 3] }),
   pedal: r => ({ 0: [r, 3], 4: [r, 3], 8: [r, 3], 12: [r, 3] }),
-  pad: r => ({ 0: [r, 16] }),
   oct: r => every(2, i => [r + (i % 4 ? 12 : 0), 2]),
   pulse: r => every(1, i => [r + (i % 4 === 2 ? 12 : 0), 1])
 };
@@ -891,6 +890,7 @@ const MINOR = { 4: 3, 9: 8, 11: 10 };
 const MINCH = { 0: [0, 'min'], 7: [0, 'min'], 5: [0, 'min'], 9: [-1, 'maj'], 2: [-4, 'maj'], 4: [-8, 'maj'] };   // acorde según su fundamental
 const SECT = { A: [0, 1, 2, 3, 4, 5, 6, 7], B: [8, 9, 10, 11, 12, 13, 14, 15] };
 SECT.AB = SECT.A.concat(SECT.B); SECT.BA = SECT.B.concat(SECT.A);
+const TRAMO = SECT.AB.concat([4, 5, 6, 7]), TRAMO_B = SECT.BA.concat([12, 13, 14, 15]);   // 20 compases
 function vary(base, o) {
   const pick = Array.isArray(o.sect) ? o.sect : SECT[o.sect || 'AB'], tr = o.tr || 0;
   const note = tok => {
@@ -912,13 +912,16 @@ function vary(base, o) {
   });
   return Object.assign({ bars, ch, arp: true }, o.set);
 }
-/* une varias variaciones en una canción larga que va cambiando: cada parte dice qué capas suenan
-   (m melodía, a acordes desgranados, p colchón) y en qué pasos del compás caen los acordes */
+/* une varias variaciones en una canción larga que cambia de arreglo por tramos: cada tramo trae sus
+   propios instrumentos (los de «set»), y el tempo es uno solo para toda la canción.
+   El cambio entra de forma leve: los dos primeros compases del tramo suenan bajito, sin batería ni segunda voz;
+   los dos siguientes, a medio camino; desde el quinto, el arreglo completo. Tampoco hay redoble que lo anuncie. */
 function suite(base, parts) {
-  const out = { bars: [], ch: [], mask: [] };
-  parts.forEach(([o, lay, as]) => {
+  const out = { bars: [], ch: [], parts: [] };
+  parts.forEach(o => {
     const v = vary(base, o);
-    v.bars.forEach((b, i) => { out.bars.push(b); out.ch.push(v.ch[i]); out.mask.push({ l: lay.includes('m'), a: lay.includes('a'), b: lay.includes('p'), as }); });
+    const soft = [Object.assign({}, v, { drums: 'none', harm: 0, gain: 0.55 }), Object.assign({}, v, { drums: 'sparse', harm: 0, gain: 0.78 })];
+    v.bars.forEach((b, i) => { out.bars.push(b); out.ch.push(v.ch[i]); out.parts.push(i < 2 ? soft[0] : i < 4 ? soft[1] : v); });
   });
   return out;
 }
@@ -939,17 +942,16 @@ Object.assign(TRACKS, {
   w4: vary(THEME, { sect: 'BA', tr: 2, set: { bpm: 122, lead: 'square', lv: 0.042, harm: 1, bass: 'oct', drums: 'adv', arpW: 'triangle', av: 0.03, echo: 0.2 } }),
   /* torneo: en la menor, insistente */
   quiz: vary(THEME, { sect: 'AB', minor: 1, tr: -3, set: { bpm: 120, lead: 'p25', lv: 0.045, harm: 1, bass: 'drive', drums: 'drive', arp: false, echo: 0.15 } }),
-  /* clases del sabio: el tema en fa convertido en música de ambiente, lenta y con mucho aire, que va cambiando
-     por tramos: primero notas sueltas sobre un colchón, luego entran los acordes desgranados, la parte B,
-     un respiro sin melodía, el tema una octava arriba y un cierre casi vacío antes de volver a empezar */
+  /* clases del sabio: el tema en do (una cuarta bajo el fa de antes), con aire de aventura y sonido de GBA.
+     Cambia de arreglo cada 45 segundos: a 106,67 pulsos un compás dura 2,25 s y cada tramo tiene 20 compases
+     (parte A, parte B y la segunda mitad de la A como cierre). Los cuatro tramos: la partida, a paso ligero;
+     la travesía, con segunda voz y batería completa; la cueva, en do menor y a paso de marcha; y la cumbre, al galope. */
   sage: Object.assign(suite(THEME, [
-    [{ sect: 'A', tr: 5, thin: 8 }, 'mp'],
-    [{ sect: 'A', tr: 5, thin: 4 }, 'map', [0, 4, 8, 12]],
-    [{ sect: 'B', tr: 5, thin: 4 }, 'map', [0, 6, 8, 14]],
-    [{ sect: [0, 1, 2, 3], tr: 5 }, 'ap', [0, 4, 8, 12]],
-    [{ sect: 'A', tr: 17, thin: 2 }, 'map', [0, 6, 8, 14]],
-    [{ sect: [4, 5, 6, 7], tr: 5, thin: 16 }, 'mp']
-  ]), { bpm: 66, amb: 1, arp: true, bass: 'pad', drums: 'none', lv: 0.085, av: 0.038, echo: 0.5, fb: 0.42, cut: 2200, ring: 2.2 }),
+    { sect: TRAMO, set: { lead: 'p25', lv: 0.046, bass: 'walk', drums: 'light', arpW: 'triangle', av: 0.034 } },
+    { sect: TRAMO, set: { lead: 'square', lv: 0.042, harm: 1, bass: 'adv', drums: 'adv', arpW: 'triangle', av: 0.03 } },
+    { sect: TRAMO_B, minor: 1, set: { lead: 'p25', lv: 0.046, harm: 1, bass: 'pedal', drums: 'march', arpW: 'p12', av: 0.02 } },
+    { sect: TRAMO, set: { lead: 'square', lv: 0.042, harm: 1, bass: 'oct', drums: 'drive', arpW: 'triangle', av: 0.03 } }
+  ]), { bpm: 320 / 3, echo: 0.24 }),
   /* falacidex: en si bemol, amable */
   dex: vary(THEME, { sect: 'A', tr: -2, set: { bpm: 96, lead: 'p25', lv: 0.045, bass: 'walk', drums: 'light', arpW: 'triangle', av: 0.036, echo: 0.3 } }),
   /* perfil: empieza por la parte B, en la bemol */
@@ -967,19 +969,20 @@ for (let i = 1; i <= 4; i++) {
 function compile(def) {
   const ev = [];
   def.bars.forEach((bs, b) => {
-    const L = parseBar(bs), r = def.ch[b][0], th = def.ch[b][1] === 'min' ? 3 : 4, odd = b % 2, last = b === def.bars.length - 1;
-    const B = BASS[def.bass](r, odd), D = DRUM[def.drums], pcs = [r % 12, (r + th) % 12, (r + 7) % 12];
-    const M = def.mask ? def.mask[b] : null, AS = (M && M.as) || [0, 4, 8, 12], AN = [r + 12, r + 19, r + 24 + th, r + 19];
+    const P = def.parts ? def.parts[b] : def;   // instrumentos de este compás: las canciones por tramos los van cambiando
+    const L = parseBar(bs), r = def.ch[b][0], th = def.ch[b][1] === 'min' ? 3 : 4, odd = b % 2;
+    const last = !def.parts && b === def.bars.length - 1;   // redoble al cerrar la canción
+    const B = BASS[P.bass](r, odd), D = DRUM[P.drums], pcs = [r % 12, (r + th) % 12, (r + 7) % 12];
     for (let i = 0; i < 16; i++) {
       const e = {};
-      if (L[i] && (!M || M.l)) {
+      if (def.parts) e.P = P;
+      if (L[i]) {
         e.l = L[i];
         /* segunda voz: la nota del acorde más cercana por debajo de la melodía */
-        if (def.harm && L[i][1] >= 2) for (let n = L[i][0] - 3; n >= L[i][0] - 9; n--) if (pcs.includes(((n % 12) + 12) % 12)) { e.hm = n; break; }
+        if (P.harm && L[i][1] >= 2) for (let n = L[i][0] - 3; n >= L[i][0] - 9; n--) if (pcs.includes(((n % 12) + 12) % 12)) { e.hm = n; break; }
       }
-      if (def.amb) { if (def.arp && (!M || M.a) && AS.includes(i)) e.a = AN[AS.indexOf(i)]; }
-      else if (def.arp && i % 2 === 0) e.a = r + 12 + [0, th, 7, 12, 7, th, 7, th][i / 2];
-      if (B[i] && (!M || M.b)) e.b = B[i];
+      if (P.arp && i % 2 === 0) e.a = r + 12 + [0, th, 7, 12, 7, th, 7, th][i / 2];
+      if (B[i]) e.b = B[i];
       if (D) { const d = D(i, odd, last); if (d) e.d = d; }
       ev.push(e);
     }
@@ -1033,7 +1036,7 @@ function voice(wave, f, t, dur, vol, dest, o) {
     l.start(t + 0.1); l.stop(t + dur + 0.03);
   }
   g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(vol, t + (o.att || 0.006));
+  g.gain.linearRampToValueAtTime(vol, t + 0.006);
   if (o.pluck) g.gain.exponentialRampToValueAtTime(vol * 0.12, t + dur);
   else {
     const hold = t + Math.max(0.007, dur * 0.55), rel = Math.max(hold + 0.001, t + dur - 0.02);
@@ -1064,34 +1067,17 @@ function hit(kind, t, dest, vol) {
   src.connect(f); f.connect(g);
   src.start(t, Math.random() * 0.5); src.stop(t + dur + 0.02);
 }
-/* canciones de ambiente (amb): notas de piano suave que siguen sonando como con pedal, acordes lentos y un colchón
-   que entra de a poco; cada nota varía un pelo en tiempo y fuerza para que no suene a máquina */
-function ambStep(m, e, t, d) {
-  const s = m.song, soft = () => 0.78 + Math.random() * 0.34, late = () => t + Math.random() * 0.025;
-  if (e.l) {
-    const ring = Math.max(e.l[1] * d, s.ring || 2), v = s.lv * soft(), at = late();
-    voice('triangle', mf(e.l[0] - 12), at, ring, v, m.g, { pluck: 1 });
-    voice('sine', mf(e.l[0]), at, ring * 0.45, v * 0.2, m.g, { pluck: 1 });
-  }
-  if (e.a) voice('sine', mf(e.a), late(), (s.ring || 2) * 0.9, s.av * soft(), m.gr, { pluck: 1 });
-  if (e.b) {
-    const len = e.b[1] * d * 0.98;
-    voice('sine', mf(e.b[0]), t, len, 0.075, m.g, { att: 0.6 });
-    voice('sine', mf(e.b[0] + 7), t, len, 0.03, m.gl, { att: 0.9 });
-  }
-}
 function schedStep(m, i, t, d) {
-  const s = m.song, e = s.ev[i];
-  if (s.amb) { ambStep(m, e, t, d); return; }
+  const e = m.song.ev[i], s = e.P || m.song, k = s.gain || 1;   // gain: los compases de entrada de un tramo suenan más bajo
   if (e.l) {
     const len = e.l[1] * d;
     /* melodía y segunda voz una octava más abajo de como están escritas: menos chillonas */
-    voice(s.lead || 'p25', mf(e.l[0] - 12), t, len * 0.94, s.lv || 0.05, m.g, { vib: e.l[1] >= 4 });
-    if (e.hm) voice('triangle', mf(e.hm - 12), t, len * 0.9, (s.lv || 0.05) * 0.6, m.gl);
+    voice(s.lead || 'p25', mf(e.l[0] - 12), t, len * 0.94, (s.lv || 0.05) * k, m.g, { vib: e.l[1] >= 4 });
+    if (e.hm) voice('triangle', mf(e.hm - 12), t, len * 0.9, (s.lv || 0.05) * 0.6 * k, m.gl);
   }
-  if (e.a) voice(s.arpW || 'p12', mf(e.a), t, d * 1.7, s.av || 0.022, m.gr, { pluck: 1 });
-  if (e.b) voice('triangle', mf(e.b[0]), t, e.b[1] * d * 0.92, 0.12, m.g);
-  if (e.d) hit(e.d, t, m.g);
+  if (e.a) voice(s.arpW || 'p12', mf(e.a), t, d * 1.7, (s.av || 0.022) * k, m.gr, { pluck: 1 });
+  if (e.b) voice('triangle', mf(e.b[0]), t, e.b[1] * d * 0.92, 0.12 * k, m.g);
+  if (e.d) hit(e.d, t, m.g, k);
 }
 function tick() {
   if (!cur || ac.state !== 'running') return;
@@ -1119,9 +1105,9 @@ function startSong(id, at) {
   g.gain.setValueAtTime(0, now);
   g.gain.linearRampToValueAtTime(1, now + 0.4);
   delay.delayTime.value = Math.min(0.9, base * 3);
-  fb.gain.value = song.fb || 0.3; wet.gain.value = song.echo || 0.2;
+  fb.gain.value = 0.3; wet.gain.value = song.echo || 0.2;
   /* filtro que redondea los agudos de las ondas de pulso */
-  const soft = ac.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = song.cut || 3000; soft.Q.value = 0.4;
+  const soft = ac.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = 3000; soft.Q.value = 0.4;
   g.connect(soft); soft.connect(bus); soft.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(bus);
   cur = { id, song, g, gl: side(-0.4), gr: side(0.4), wet, base, step: 0, next: now + 0.1 };
 }
