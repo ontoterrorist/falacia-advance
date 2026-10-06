@@ -12,7 +12,7 @@ Juego para aprender a detectar falacias, con aspecto de consola portátil. Está
 | Modo | Qué es |
 |---|---|
 | Aventura | Cuatro mundos, cada uno con una mini-clase y 12 desafíos: formales, relevancia, ambigüedad y presunción, causalidad y sesgos |
-| Clases con el sabio | Los conceptos clave (argumento, validez, solidez) y las 40 falacias, explicados página por página |
+| Clases con el sabio | Los conceptos clave (argumento, validez, solidez) y las 39 falacias, explicados página por página |
 | Relámpago | 60 segundos para decidir si cada argumento es una falacia o es legítimo |
 | Torneo | 15 preguntas mezcladas y solo 3 vidas |
 | Jefe | Una columna de opinión que esconde seis falacias |
