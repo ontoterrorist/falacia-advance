@@ -1228,7 +1228,7 @@ const FAL={
   ce:'No puedes estar en Santiago y en Lima a la vez. ∴ No estás en Santiago ni en Lima. (¡Estás en Santiago!)'},
  medio_no_dist:{n:'Término medio no distribuido',f:'formal',
   d:'El término común a las dos premisas nunca se toma entero: los A están dentro de B y los C están dentro de B, pero nadie dijo que compartan un solo punto. Dos islas en el mismo mar.',
-  tip:'Alarma temprana: «los malos hacen X; tú haces X; luego eres de los malos».',
+  tip:'Alarma temprana: «todos los malos hacen X; todos estos hacen X; luego todos estos son malos».',
   ce:'Todos los perros son mamíferos. Todos los gatos son mamíferos. ∴ Todos los gatos son perros.'},
  proceso_ilicito:{n:'Proceso ilícito',f:'formal',
   d:'La conclusión habla de TODOS los B, pero la premisa solo habló de los B que además son A. Se afirma de un grupo entero lo que solo se probó de una parte.',
@@ -1357,7 +1357,7 @@ Q(1,'neg_antec',`Si fumas, te da cáncer.\nYo no fumo.\n∴ No me va a dar cánc
 Q(1,'afirm_disy',`Para ganar la beca hay que tener buenas notas o hacer deporte.\nTú tienes buenas notas.\n∴ No haces deporte.`,`Puedes tener buenas notas Y hacer deporte: el «o» lógico es inclusivo.`);
 Q(1,'neg_conj',`No es cierto que sea rico y famoso.\n∴ No es rico y tampoco es famoso.`,`Puede ser riquísimo y desconocido. Solo sabemos que al menos una de las dos cosas falla.`);
 Q(1,'medio_no_dist',`Todos los perros son mamíferos.\nTodos los gatos son mamíferos.\n∴ Todos los gatos son perros.`,`«Mamífero» nunca se toma entero: perros y gatos son dos islas en el mismo mar.`);
-Q(1,'medio_no_dist',`Todos los terroristas usan teléfono encriptado.\nEste ciudadano usa teléfono encriptado.\n∴ Es sospechoso de terrorismo.`,`Millones de personas usan teléfono encriptado. Es el esquema «los malos hacen X; tú haces X; luego eres malo».`);
+Q(1,'medio_no_dist',`Todos los terroristas usan teléfono encriptado.\nTodos los periodistas de investigación usan teléfono encriptado.\n∴ Todos los periodistas de investigación son terroristas.`,`Lo que tienen en común es el teléfono, y nunca se habló de TODOS los que lo usan. Es el esquema «los malos hacen X; estos hacen X; luego son malos».`);
 Q(1,'proceso_ilicito',`Todos los que evaden impuestos son deshonestos.\nNinguno de nuestros socios evade impuestos.\n∴ Ninguno de nuestros socios es deshonesto.`,`Hay otras formas de ser deshonesto: de los evasores se dijo algo, de los deshonestos en general no.`);
 Q(3,'equivocacion',`Nada es mejor que la felicidad eterna.\nUn sándwich es mejor que nada.\n∴ Un sándwich es mejor que la felicidad eterna.`,`«Nada» significa «ninguna cosa» en (1) y «no tener nada» en (2): la palabra cambia de sentido entre una premisa y la otra.`);
 Q(1,'modal',`Necesariamente, si Dios sabe que mañana mentirás, mañana mentirás.\nDios lo sabe.\n∴ Mañana mentirás necesariamente.`,`Lo necesario es el vínculo (saber→ocurrir), no el hecho. Solo se sigue «mentirás», no «necesariamente».`);
@@ -1489,8 +1489,8 @@ const CLASES_DEF=[
 // Mundo 1
 Q(1,'afirm_consec',`Si estudias medicina, sabrás anatomía.\nSabes anatomía.\n∴ Estudiaste medicina.`,`La anatomía también se aprende en enfermería, en kinesiología o por cuenta propia.`);
 Q(1,'afirm_consec',`Si sube el dólar, suben los precios.\nLos precios subieron.\n∴ Subió el dólar.`,`Los precios suben por muchas otras causas: escasez, impuestos, más demanda…`);
-Q(1,'medio_no_dist',`Todos los mentirosos evitan mirar a los ojos.\nEste niño evita mirar a los ojos.\n∴ Miente.`,`También los tímidos evitan mirar a los ojos.`);
-Q(1,'medio_no_dist',`Todos los votantes son mayores de edad.\nAna es mayor de edad.\n∴ Ana es votante.`,`Hay mayores de edad que no votan. Misma forma: todos los pingüinos son aves; el cóndor es ave; luego el cóndor es pingüino.`);
+Q(1,'medio_no_dist',`Todos los mentirosos evitan mirar a los ojos.\nTodos los niños tímidos evitan mirar a los ojos.\n∴ Todos los niños tímidos son mentirosos.`,`Compartir un rasgo no mete a un grupo dentro del otro: ninguna premisa habló de TODOS los que evitan mirar a los ojos.`);
+Q(1,'medio_no_dist',`Todos los votantes de la comuna son mayores de edad.\nTodos los turistas del crucero son mayores de edad.\n∴ Todos los turistas del crucero son votantes de la comuna.`,`Hay mayores de edad que no votan aquí. Misma forma: todos los pingüinos son aves; todos los cóndores son aves; luego todos los cóndores son pingüinos.`);
 Q(1,'proceso_ilicito',`Todos los diputados tienen fuero.\nNinguna de estas personas es diputado.\n∴ Ninguna de estas personas tiene fuero.`,`Los senadores también tienen fuero: la premisa no dijo que SOLO los diputados lo tengan.`);
 Q(1,'neg_antec',`Si hubiera un incendio, sonaría la alarma.\nNo hay incendio.\n∴ La alarma no sonará.`,`La alarma puede sonar por un simulacro o por una falla.`);
 Q(1,'neg_conj',`No es cierto que sea barato y rápido.\n∴ No es barato ni es rápido.`,`Puede ser barato y lento. Al negar una conjunción solo sabes que falla al menos una parte.`);
@@ -1581,6 +1581,215 @@ const TIPS = [
   'Las falacias se detectan mejor en uno mismo.'
 ];
 
+/* Falacia Advance — versiones del modo Relámpago.
+   Cada lista tiene exactamente 100 ejemplos: los de la Aventura de esa parte del curso más los de aquí,
+   que solo salen en Relámpago (por eso no llevan explicación). k: clave de la falacia, u «ok» si el argumento es bueno.
+   Reglas de estilo: el término medio no distribuido va siempre con universales («Todos los A son B. Todos los C son B.
+   ∴ Todos los C son A») y el proceso ilícito con un universal afirmativo y dos negativos («Todos los A son B.
+   Ningún C es A. ∴ Ningún C es B»). */
+const FLX = { formal: [], relev: [], resto: [] };
+const XF = (k, t) => FLX.formal.push({ k, t }), XR = (k, t) => FLX.relev.push({ k, t }), XO = (k, t) => FLX.resto.push({ k, t });
+
+/* ================= FORMALES (sesión 1): 36 falacias + 36 válidos ================= */
+XF('afirm_consec', `Si el auto está sin bencina, no parte.\nEl auto no parte.\n∴ Está sin bencina.`);
+XF('afirm_consec', `Si copió en la prueba, sacó un 7.\nSacó un 7.\n∴ Copió en la prueba.`);
+XF('afirm_consec', `Si es oro, brilla.\nEsta piedra brilla.\n∴ Es oro.`);
+XF('afirm_consec', `Si el plan de seguridad funciona, bajan los delitos.\nBajaron los delitos.\n∴ El plan funciona.`);
+XF('neg_antec', `Si es chileno, es sudamericano.\nNo es chileno.\n∴ No es sudamericano.`);
+XF('neg_antec', `Si estudias toda la noche, apruebas.\nNo estudiaste toda la noche.\n∴ No vas a aprobar.`);
+XF('neg_antec', `Si corre una maratón, queda cansado.\nNo corrió una maratón.\n∴ No está cansado.`);
+XF('neg_antec', `Si el testigo miente, el acusado queda libre.\nEl testigo no miente.\n∴ El acusado no quedará libre.`);
+XF('neg_antec', `Si es un cuadrado, tiene cuatro lados.\nNo es un cuadrado.\n∴ No tiene cuatro lados.`);
+XF('afirm_disy', `La candidata habla inglés o habla francés.\nHabla inglés.\n∴ No habla francés.`);
+XF('afirm_disy', `Para entrar necesitas invitación o ser socio.\nTienes invitación.\n∴ No eres socio.`);
+XF('afirm_disy', `El apagón se debió a la lluvia o a una falla del transformador.\nLlovió.\n∴ El transformador no falló.`);
+XF('afirm_disy', `Reprobó por faltar a clases o por no estudiar.\nFaltó a clases.\n∴ No fue por no estudiar.`);
+XF('neg_conj', `No es cierto que el hotel sea céntrico y barato.\n∴ No es céntrico y tampoco es barato.`);
+XF('neg_conj', `No es verdad que Ana y Luis hayan aprobado los dos.\n∴ Ninguno de los dos aprobó.`);
+XF('neg_conj', `No se puede ser juez y parte.\n∴ Ella no es juez ni es parte.`);
+XF('neg_conj', `No es cierto que llueva y haga frío.\n∴ No llueve y no hace frío.`);
+XF('medio_no_dist', `Todos los poetas son soñadores.\nTodos los niños son soñadores.\n∴ Todos los niños son poetas.`);
+XF('medio_no_dist', `Todos los delincuentes desconfían de la policía.\nTodos los vecinos de este barrio desconfían de la policía.\n∴ Todos los vecinos de este barrio son delincuentes.`);
+XF('medio_no_dist', `Todos los médicos usan delantal blanco.\nTodos los panaderos usan delantal blanco.\n∴ Todos los panaderos son médicos.`);
+XF('medio_no_dist', `Todas las estafas prometen ganancias rápidas.\nTodas las ofertas de este banco prometen ganancias rápidas.\n∴ Todas las ofertas de este banco son estafas.`);
+XF('medio_no_dist', `Todos los buenos alumnos se sientan adelante.\nTodos los miopes se sientan adelante.\n∴ Todos los miopes son buenos alumnos.`);
+XF('medio_no_dist', `Todos los peces viven en el agua.\nTodas las ballenas viven en el agua.\n∴ Todas las ballenas son peces.`);
+XF('medio_no_dist', `Todos los revolucionarios fueron perseguidos.\nTodos los estafadores fueron perseguidos.\n∴ Todos los estafadores son revolucionarios.`);
+XF('proceso_ilicito', `Todos los cirujanos son médicos.\nNingún pediatra es cirujano.\n∴ Ningún pediatra es médico.`);
+XF('proceso_ilicito', `Todos los futbolistas son deportistas.\nNingún tenista es futbolista.\n∴ Ningún tenista es deportista.`);
+XF('proceso_ilicito', `Todos los violinistas son músicos.\nNingún baterista es violinista.\n∴ Ningún baterista es músico.`);
+XF('proceso_ilicito', `Todos los que fuman arriesgan su salud.\nNinguno de mis amigos fuma.\n∴ Ninguno de mis amigos arriesga su salud.`);
+XF('proceso_ilicito', `Todos los corruptos merecen sanción.\nNingún funcionario de esta oficina es corrupto.\n∴ Ningún funcionario de esta oficina merece sanción.`);
+XF('proceso_ilicito', `Todas las novelas son libros.\nNingún diccionario es una novela.\n∴ Ningún diccionario es un libro.`);
+XF('proceso_ilicito', `Todos los santiaguinos son chilenos.\nNingún valdiviano es santiaguino.\n∴ Ningún valdiviano es chileno.`);
+XF('modal', `Necesariamente, si está soltero, no está casado.\nEstá soltero.\n∴ Necesariamente no está casado.`);
+XF('modal', `Es imposible ganar y perder el mismo partido.\nGanó.\n∴ Era imposible que perdiera.`);
+XF('inv_cuant', `Cada alumno leyó algún libro.\n∴ Hay un libro que leyeron todos los alumnos.`);
+XF('inv_cuant', `Toda persona tiene una madre.\n∴ Hay una madre de todas las personas.`);
+XF('inv_cuant', `Todo efecto tiene una causa.\n∴ Hay una causa de todos los efectos.`);
+
+XF('ok', `Si el semáforo está en rojo, hay que detenerse.\nEstá en rojo.\n∴ Hay que detenerse.`);
+XF('ok', `Si un número termina en cero, es divisible por cinco.\n90 termina en cero.\n∴ 90 es divisible por cinco.`);
+XF('ok', `Si es menor de edad, no puede votar.\nEs menor de edad.\n∴ No puede votar.`);
+XF('ok', `Si cortan la luz, se apaga el refrigerador.\nCortaron la luz.\n∴ El refrigerador se apagó.`);
+XF('ok', `Si aprobó todos los ramos, puede titularse.\nAprobó todos los ramos.\n∴ Puede titularse.`);
+XF('ok', `Si hubiera fuego, habría humo.\nNo hay humo.\n∴ No hay fuego.`);
+XF('ok', `Si es un cuadrado, tiene cuatro lados.\nEsta figura no tiene cuatro lados.\n∴ No es un cuadrado.`);
+XF('ok', `Si hubiera estudiado, sabría la primera pregunta.\nNo sabe la primera pregunta.\n∴ No estudió.`);
+XF('ok', `Si el tren ya pasó, el andén está vacío.\nEl andén no está vacío.\n∴ El tren no ha pasado.`);
+XF('ok', `Si es chileno, es sudamericano.\nNo es sudamericano.\n∴ No es chileno.`);
+XF('ok', `Si tuviera fiebre, el termómetro marcaría más de 38.\nNo marca más de 38.\n∴ No tiene fiebre.`);
+XF('ok', `Las llaves están en la mochila o en el auto.\nNo están en la mochila.\n∴ Están en el auto.`);
+XF('ok', `La candidata habla inglés o habla francés.\nNo habla inglés.\n∴ Habla francés.`);
+XF('ok', `El apagón se debió a la lluvia o a una falla del transformador.\nEl transformador no falló.\n∴ Se debió a la lluvia.`);
+XF('ok', `Pagas con efectivo o con tarjeta.\nNo pagas con efectivo.\n∴ Pagas con tarjeta.`);
+XF('ok', `El paciente está vivo o muerto, y no las dos cosas.\nEstá vivo.\n∴ No está muerto.`);
+XF('ok', `La luz del pasillo está encendida o apagada, y no las dos cosas.\nEstá encendida.\n∴ No está apagada.`);
+XF('ok', `No es cierto que el hotel sea céntrico y barato.\n∴ No es céntrico o no es barato.`);
+XF('ok', `No es cierto que llueva y haga frío.\nLlueve.\n∴ No hace frío.`);
+XF('ok', `No es verdad que Ana y Luis hayan aprobado los dos.\nAna aprobó.\n∴ Luis no aprobó.`);
+XF('ok', `Todos los felinos son mamíferos.\nTodos los leones son felinos.\n∴ Todos los leones son mamíferos.`);
+XF('ok', `Todos los cirujanos son médicos.\nTodos los neurocirujanos son cirujanos.\n∴ Todos los neurocirujanos son médicos.`);
+XF('ok', `Todos los santiaguinos son chilenos.\nTodos los vecinos de Ñuñoa son santiaguinos.\n∴ Todos los vecinos de Ñuñoa son chilenos.`);
+XF('ok', `Todos los metales conducen la electricidad.\nTodos los alambres de cobre son de metal.\n∴ Todos los alambres de cobre conducen la electricidad.`);
+XF('ok', `Ningún reptil tiene plumas.\nTodas las serpientes son reptiles.\n∴ Ninguna serpiente tiene plumas.`);
+XF('ok', `Ningún menor de edad puede votar.\nTodos los alumnos de este curso son menores de edad.\n∴ Ningún alumno de este curso puede votar.`);
+XF('ok', `Ningún triángulo tiene cuatro lados.\nTodos los triángulos isósceles son triángulos.\n∴ Ningún triángulo isósceles tiene cuatro lados.`);
+XF('ok', `Todos los gatos son animales.\nNinguna piedra es un animal.\n∴ Ninguna piedra es un gato.`);
+XF('ok', `Todos los diputados tienen fuero.\nNinguna de estas personas tiene fuero.\n∴ Ninguna de estas personas es diputado.`);
+XF('ok', `Todos los que evaden impuestos son deshonestos.\nNinguno de nuestros socios es deshonesto.\n∴ Ninguno de nuestros socios evade impuestos.`);
+XF('ok', `Ningún vegetariano come carne.\nTodos mis primos comen carne.\n∴ Ninguno de mis primos es vegetariano.`);
+XF('ok', `Ningún planeta tiene luz propia.\nTodas las estrellas tienen luz propia.\n∴ Ninguna estrella es un planeta.`);
+XF('ok', `Hay un libro que leyeron todos los alumnos.\n∴ Cada alumno leyó algún libro.`);
+XF('ok', `Hay alguien a quien todo el mundo admira.\n∴ Todo el mundo admira a alguien.`);
+XF('ok', `Si llueve, se suspende el partido.\nSi se suspende el partido, devuelven las entradas.\n∴ Si llueve, devuelven las entradas.`);
+XF('ok', `Si sube el dólar, sube la bencina.\nSi sube la bencina, sube el pasaje.\n∴ Si sube el dólar, sube el pasaje.`);
+
+/* ================= INFORMALES DE RELEVANCIA (sesión 2): 35 falacias + 31 legítimos ================= */
+XR('ad_hominem', `—Hay que subir el impuesto al tabaco.\n—Lo dice un tipo que ni terminó el colegio.`);
+XR('ad_hominem', `No hagan caso a su estudio sobre el clima: es un amargado al que nadie invita a nada.`);
+XR('ad_hominem', `—La reforma tiene un error de cálculo.\n—Tú eres de la oposición: obvio que dirás eso.`);
+XR('ad_hominem', `Su propuesta para los colegios no sirve: ella ni siquiera tiene hijos.`);
+XR('tu_quoque', `—Fumar hace mal, hijo.\n—Tú fumas desde los quince, así que no es cierto.`);
+XR('tu_quoque', `—Tu empresa contamina el río.\n—¿Y la tuya? También bota desechos.`);
+XR('tu_quoque', `El médico me dice que baje de peso, pero él está gordo.\n∴ Su consejo no vale.`);
+XR('genetica', `Esa idea salió de un programa de farándula.\n∴ Tiene que ser falsa.`);
+XR('genetica', `La teoría nació en una universidad religiosa.\n∴ No puede ser científica.`);
+XR('genetica', `Esa costumbre la trajeron los conquistadores.\n∴ Es una mala costumbre.`);
+XR('autoridad', `Un futbolista famoso dice que esta criptomoneda es segura.\n∴ Es segura.`);
+XR('autoridad', `Mi dentista dice que la economía se arregla bajando los impuestos.\n∴ Hay que bajar los impuestos.`);
+XR('autoridad', `Una doctora en Literatura asegura que este jarabe cura la tos.\n∴ El jarabe cura la tos.`);
+XR('autoridad', `Lo leí en un libro.\n∴ Tiene que ser cierto.`);
+XR('populum', `Millones de personas leen el horóscopo.\n∴ Algo de verdad tiene.`);
+XR('populum', `Todos mis compañeros copian en las pruebas.\n∴ Copiar no está mal.`);
+XR('populum', `Es la marca más vendida del país.\n∴ Es la de mejor calidad.`);
+XR('populum', `En esta familia siempre se ha hecho así.\n∴ Es la forma correcta de hacerlo.`);
+XR('baculum', `Yo que usted aprobaría mi proyecto: sería una lástima que perdiera su puesto.`);
+XR('baculum', `Mi tesis es correcta, profesor. Recuerde que mi papá financia esta facultad.`);
+XR('baculum', `Si sigues diciendo que el jefe se equivoca, olvídate del ascenso.\n∴ El jefe no se equivoca.`);
+XR('misericordia', `Profesor, mi prueba merece un 4: si repruebo, mi mamá se va a enfermar de pena.`);
+XR('misericordia', `No iba a exceso de velocidad, oficial: he tenido una semana horrible.`);
+XR('misericordia', `Mi informe merece la nota máxima: lo escribí llorando y sin dormir.`);
+XR('ignorantiam', `Nadie ha podido probar que el monstruo del lago no existe.\n∴ Existe.`);
+XR('ignorantiam', `No encontraron pruebas de que el alcalde sea honesto.\n∴ Es corrupto.`);
+XR('ignorantiam', `No has podido probar que eres inocente.\n∴ Eres culpable.`);
+XR('consecuencias', `Si el examen dijera la verdad, yo estaría enfermo, y eso sería terrible.\n∴ El examen está equivocado.`);
+XR('consecuencias', `Si el informe fuera cierto, la empresa quebraría.\n∴ El informe es falso.`);
+XR('consecuencias', `Creer que mi hijo robó me destrozaría.\n∴ Mi hijo no robó.`);
+XR('paja', `—Deberíamos comer menos carne.\n—O sea que quieres obligarnos a todos a comer pasto.`);
+XR('paja', `—Habría que regular los patinetes eléctricos.\n—¡Usted quiere prohibir todo lo que tenga ruedas!`);
+XR('paja', `—Creo que los niños deberían ver menos televisión.\n—¡Mi vecino quiere criar a los niños encerrados y sin diversión!`);
+XR('pista_falsa', `—¿Por qué subió la cuenta de la luz?\n—Lo importante es que este año inauguramos tres plazas.`);
+XR('pista_falsa', `—Su informe tiene cifras falsas.\n—¿Y no le parece grave el estado de las veredas?`);
+
+XR('ok', `El vendedor gana comisión por cada seguro que coloca.\n∴ Conviene comparar su oferta con otras antes de firmar.`);
+XR('ok', `El blog que elogia este colchón pertenece a la fábrica del colchón.\n∴ Su reseña no basta para decidir la compra.`);
+XR('ok', `El candidato a tesorero fue condenado por fraude.\n∴ Hay razones para no confiarle la caja.`);
+XR('ok', `El perito es socio del demandante.\n∴ El tribunal debe pedir un segundo peritaje.`);
+XR('ok', `Dices que nadie debe llegar tarde, pero tú llegas tarde.\n∴ No estás cumpliendo tu propia regla.`);
+XR('ok', `Dos ingenieros estructurales revisaron la casa y ambos dicen que la viga está dañada.\n∴ Es razonable repararla.`);
+XR('ok', `Según el Servicio Sismológico, el temblor fue de 6,1.\n∴ Probablemente fue de 6,1.`);
+XR('ok', `El manual del fabricante dice que este motor usa aceite 10W-40.\n∴ Conviene ponerle 10W-40.`);
+XR('ok', `Casi todos los climatólogos coinciden en que el planeta se calienta.\n∴ Es razonable creerlo.`);
+XR('ok', `El pediatra dice que esa dosis es para adultos.\n∴ No se la des al niño.`);
+XR('ok', `La mayoría votó por la lista B.\n∴ La lista B ganó la elección.`);
+XR('ok', `Casi todos los hablantes dicen «murciélago».\n∴ «Murciélago» es hoy la forma usual.`);
+XR('ok', `Nueve de cada diez vecinos votaron por tener la feria el sábado.\n∴ El sábado es el día que prefieren los vecinos.`);
+XR('ok', `Si manejas a 150 km/h, te pueden quitar la licencia.\n∴ Te conviene bajar la velocidad.`);
+XR('ok', `Quien no paga el arriendo puede ser desalojado.\nNo has pagado en tres meses.\n∴ Te arriesgas a un desalojo.`);
+XR('ok', `El terremoto dejó al pueblo sin agua potable.\n∴ Hay que enviarle agua con urgencia.`);
+XR('ok', `El alumno estuvo hospitalizado el día del examen.\n∴ Es justo darle otra fecha.`);
+XR('ok', `Revisamos toda la casa con detectores y no hallamos gas.\n∴ Probablemente no hay fuga.`);
+XR('ok', `No hay ninguna prueba contra el acusado.\n∴ Debe ser tratado como inocente.`);
+XR('ok', `El examen de sangre no encontró el virus.\n∴ Probablemente no está infectado.`);
+XR('ok', `Si cerramos el consultorio, el pueblo queda sin médico.\n∴ Es una razón para no cerrarlo.`);
+XR('ok', `Este puente puede caerse si pasan camiones.\n∴ Hay que prohibir el paso de camiones.`);
+XR('ok', `Fumar aumenta el riesgo de cáncer.\n∴ Es mejor no fumar.`);
+XR('ok', `—Propongo cerrar la biblioteca los domingos.\n—El domingo es cuando más gente va: cerrarla ese día perjudica a los lectores.`);
+XR('ok', `—Pido subir el pasaje un 10 %.\n—Usted pide un 10 %; según estas cuentas, con un 5 % alcanza.`);
+XR('ok', `—¿Por qué subió la cuenta de la luz?\n—Porque la tarifa subió 8 % en marzo: aquí está la boleta.`);
+XR('ok', `La cifra viene de una cuenta anónima que ya difundió tres noticias falsas.\n∴ No hay que darla por cierta sin confirmarla.`);
+XR('ok', `El rumor salió de un sitio de bromas.\n∴ Conviene dudar de él hasta verificarlo.`);
+XR('ok', `La mecánica revisó los frenos y encontró las pastillas gastadas.\n∴ Hay que cambiarlas.`);
+XR('ok', `Tres testigos independientes vieron al auto rojo pasarse la luz.\n∴ Probablemente se la pasó.`);
+XR('ok', `El contrato dice que el arriendo vence en marzo.\n∴ En marzo hay que renovar o irse.`);
+
+/* ================= EL RESTO (sesión 3: ambigüedad, presunción y causalidad): 16 falacias + 29 legítimos ================= */
+XO('anfibologia', `El aviso dice: «Se venden camas para niños de fierro».\n∴ Hay niños de fierro.`);
+XO('anfibologia', `«Vi al vecino con el telescopio.»\n∴ El vecino tiene un telescopio.`);
+XO('conjuncion', `Laura es tímida y ama los libros.\n∴ Es más probable que sea bibliotecaria y poeta que solo bibliotecaria.`);
+XO('equivocacion', `Solo el hombre es racional.\nNinguna mujer es hombre.\n∴ Ninguna mujer es racional.`);
+XO('composicion', `Cada pieza del motor es liviana.\n∴ El motor es liviano.`);
+XO('division', `El curso tiene promedio 6,5.\n∴ Cada alumno del curso tiene promedio 6,5.`);
+XO('peticion', `El opio hace dormir porque tiene una virtud dormitiva.`);
+XO('dilema', `O compras el seguro hoy o lo perderás todo.\nNo quieres perderlo todo.\n∴ Tienes que comprarlo hoy.`);
+XO('analogia', `Los empleados son como los clavos: hay que golpearlos en la cabeza para que funcionen.`);
+XO('accidente', `Hay que devolver lo que se pide prestado.\n∴ Debo devolverle el cuchillo a mi amigo ahora, aunque esté furioso y amenazando a alguien.`);
+XO('post_hoc', `Me puse la camiseta de la suerte y ganamos.\n∴ Ganamos gracias a la camiseta.`);
+XO('cum_hoc', `Los niños con pies más grandes leen mejor.\n∴ Tener los pies grandes mejora la lectura.`);
+XO('generalizacion', `Probé dos restaurantes de esta ciudad y eran malos.\n∴ En esta ciudad se come mal.`);
+XO('pendiente', `Si hoy dejo que entregues tarde, mañana nadie entregará nada y el colegio tendrá que cerrar.\n∴ No puedo aceptar tu trabajo.`);
+XO('jugador', `Mis cuatro hijos son niñas.\n∴ El quinto tiene que ser niño.`);
+XO('costo_hundido', `Ya llevo tres años en esta carrera que detesto.\n∴ Tengo que terminarla.`);
+
+XO('ok', `Cada vez que desenchufo el router se cae internet, y cuando lo enchufo vuelve.\n∴ La conexión depende del router.`);
+XO('ok', `Al quitar el gluten los síntomas desaparecieron; al reintroducirlo volvieron, tres veces seguidas.\n∴ Probablemente el gluten los causa.`);
+XO('ok', `La relación entre fumar y cáncer se mantiene al controlar edad, dieta y ejercicio, y se conoce el mecanismo.\n∴ Fumar causa cáncer.`);
+XO('ok', `Probé una cucharada de la sopa bien revuelta y está salada.\n∴ La sopa está salada.`);
+XO('ok', `Los 30 alumnos del curso rindieron la prueba y los 30 aprobaron.\n∴ Todos los alumnos del curso aprobaron.`);
+XO('ok', `De 500 ampolletas probadas al azar, 499 funcionaron.\n∴ La próxima que saques de la caja muy probablemente funciona.`);
+XO('ok', `Revisaron las boletas de todo el año, no solo las de diciembre.\n∴ El promedio de ventas calculado es representativo del año.`);
+XO('ok', `La encuesta se hizo solo a clientes satisfechos.\n∴ No sirve para saber qué piensan todos los clientes.`);
+XO('ok', `Si no pagas la cuota, el banco cobra una multa: está en el contrato que firmaste.\n∴ Si no pagas, tu deuda crece.`);
+XO('ok', `Si dejas abierta la llave del gas, la cocina se llena de gas, y el gas acumulado explota con una chispa.\n∴ Es peligroso dejarla abierta.`);
+XO('ok', `La moneda es normal y cada tirada es independiente.\n∴ Tras cinco caras, la probabilidad de sello sigue siendo 50 %.`);
+XO('ok', `En el mazo había cuatro ases y ya salieron tres.\n∴ Ahora es menos probable sacar un as.`);
+XO('ok', `Lo que ya gasté no vuelve.\nTerminar la obra cuesta más de lo que vale.\n∴ Conviene detenerla.`);
+XO('ok', `Me falta un ramo para titularme y el título me servirá para trabajar.\n∴ Conviene terminar la carrera.`);
+XO('ok', `Para que llueva y truene tiene que llover.\n∴ Que llueva es al menos tan probable como que llueva y truene.`);
+XO('ok', `Tu argumento a favor de la medida es falaz.\n∴ Ese argumento no la respalda: habrá que buscar otro.`);
+XO('ok', `Anuncié mi predicción antes de medir y la medición la confirmó.\n∴ El resultado cuenta a favor de mi hipótesis.`);
+XO('ok', `Toda estrella es una bola de gas ardiente.\nEl Sol es una estrella.\n∴ El Sol es una bola de gas ardiente.`);
+XO('ok', `Cada ladrillo pesa dos kilos y el muro tiene cien ladrillos.\n∴ Los ladrillos del muro pesan doscientos kilos.`);
+XO('ok', `El equipo completo viajó a Lima.\n∴ El arquero, que es del equipo, viajó a Lima.`);
+XO('ok', `Todo el edificio quedó sin luz.\n∴ El tercer piso quedó sin luz.`);
+XO('ok', `El diario publicó los documentos originales y dos peritos confirmaron las firmas.\n∴ La noticia es fiable.`);
+XO('ok', `La sangre del paciente es de tipo A, B, AB u O.\nLos exámenes descartan A, B y AB.\n∴ Es de tipo O.`);
+XO('ok', `El fármaco redujo tumores en ratones, que en este punto funcionan casi igual que los humanos.\n∴ Vale la pena probarlo en personas.`);
+XO('ok', `Tu auto y el mío son del mismo modelo y año, y al mío le falló la bomba de agua a los 80.000 km.\n∴ Conviene revisar la tuya.`);
+XO('ok', `Está prohibido estacionar frente al hospital.\nTu auto está frente al hospital y no hay ninguna emergencia.\n∴ Estás mal estacionado.`);
+XO('ok', `Hay que cumplir las promesas, pero prometí ir al cine y mi hijo se accidentó.\n∴ Está justificado faltar a esta promesa.`);
+XO('ok', `El sol ha salido todos los días de los que hay registro.\n∴ Muy probablemente saldrá mañana.`);
+XO('ok', `Hay huellas de barro del tamaño de las patas del perro desde la puerta hasta el sillón.\n∴ Lo más probable es que el perro se subió al sillón.`);
+
+/* las cuatro versiones: tres listas de 100 y la mezcla de todas. yes: cómo se llama aquí el argumento que no es falacia */
+const FLASHES = [
+  { id: 'formal', n: 'FORMALES', sub: 'Esquemas rotos contra esquemas válidos', yes: 'VÁLIDO', list: QS.filter(q => q.w === 1).concat(FLX.formal) },
+  { id: 'relev', n: 'INFORMALES', sub: 'Relevancia: razones que hablan de otra cosa', yes: 'LEGÍTIMO', list: QS.filter(q => q.w === 2).concat(FLX.relev) },
+  { id: 'resto', n: 'EL RESTO', sub: 'Ambigüedad, presunción y causalidad', yes: 'LEGÍTIMO', list: QS.filter(q => q.w >= 3).concat(FLX.resto) }
+];
+FLASHES.push({ id: 'todas', n: 'TODAS', sub: 'Las tres listas mezcladas', yes: 'LEGÍTIMO', list: [].concat(...FLASHES.map(f => f.list)) });
+
 /* Falacia Advance — el juego: estado, pantallas y controles */
 (function () {
 'use strict';
@@ -1594,7 +1803,7 @@ const NL = String.fromCharCode(10);
 
 /* ---------- guardado ---------- */
 const SK = 'falacia-boy-v1';
-const FRESH = () => ({ caught: {}, seen: {}, stars: {}, qs: {}, best: 0, flash: 0, xp: 0, ach: {}, units: {}, t: { right: 0, wrong: 0, ok: 0, streak: 0, runs: 0 } });
+const FRESH = () => ({ caught: {}, seen: {}, stars: {}, qs: {}, best: 0, flash: 0, fl: {}, xp: 0, ach: {}, units: {}, t: { right: 0, wrong: 0, ok: 0, streak: 0, runs: 0 } });
 const S = Object.assign({ mv: 3, sv: 4, voice: true }, FRESH());
 try {
   const o = JSON.parse(localStorage.getItem(SK) || '{}');
@@ -1602,6 +1811,7 @@ try {
   delete o.music;
   const t = Object.assign(S.t, o.t || {});
   Object.assign(S, o); S.t = t;
+  if (S.flash && !Object.keys(S.fl || {}).length) S.fl = { todas: S.flash };   // el récord antiguo era con todo mezclado
 } catch (e) { /* sin almacenamiento */ }
 if (window.FA_SAVE) Object.assign(S, window.FA_SAVE);   // partida prefijada (video promocional)
 const save = () => { try { localStorage.setItem(SK, JSON.stringify(S)); } catch (e) { /* sin almacenamiento */ } };
@@ -1702,7 +1912,7 @@ function theme() {
     case 'clases': case 'clase': return 'sage';
     case 'dex': case 'dexd': return 'dex';
     case 'perfil': return 'perfil';
-    case 'flash': case 'flashend': return 'flash';
+    case 'flashsel': case 'flash': case 'flashend': return 'flash';
   }
   return 'menu';
 }
@@ -1835,7 +2045,7 @@ LEG.title = () => [['START', 'empezar']];
 const MENU = () => [
   ['AVENTURA', 'Cuatro mundos del curso, de las falacias formales a las causales.', 'brave', () => go('worlds')],
   ['CLASES CON EL SABIO', 'Los conceptos clave y las 39 falacias, explicados paso a paso.', 'think', () => go('clases')],
-  ['RELÁMPAGO', `60 segundos: ¿falacia o argumento legítimo? Tu récord: ${S.flash}.`, 'surprised', () => startFlash()],
+  ['RELÁMPAGO', `60 segundos: ¿falacia o no? Formales, informales, el resto o todas. Tu mejor marca: ${S.flash}.`, 'surprised', () => go('flashsel')],
   ['TORNEO', `15 preguntas mezcladas y solo 3 vidas. Tu récord: ${S.best}.`, 'cool', () => startRun('tor')],
   ['JEFE: LA COLUMNA', 'Seis falacias escondidas en una columna de opinión.', 'scared', () => go('lesson', { boss: true, pg: 0 })],
   ['FALACIDEX', `Tu álbum de falacias: ${caughtN()} de ${DEX.length} capturadas.`, 'love', () => go('dex')],
@@ -2123,20 +2333,31 @@ R.gameover = () => {
 H.gameover = { A() { AU.sfx.ok(); if (V.idx === 0) again(); else leaveRun(); }, B() { AU.sfx.back(); leaveRun(); } };
 
 /* ---------- relámpago ---------- */
-function startFlash() {
-  F = { score: 0, streak: 0, best: 0, right: 0, wrong: 0, left: 60000, last: null, lock: false, iv: null };
+/* cuatro versiones (flash.js): formales, informales de relevancia, el resto y todas mezcladas */
+const flRec = id => (S.fl && S.fl[id]) || 0;
+R.flashsel = () => {
+  V.n = FLASHES.length;
+  return `<div class="hud"><span class="chip">RELÁMPAGO</span><span class="ttl">Elige una versión</span><span class="pts">60 s</span></div>
+  <div class="frow">${bot('surprised')}<div class="bubble tail">¿Falacia o no? Cada lista sale barajada de nuevo en cada partida. Acierto: +1 punto. Fallo: −3 segundos.</div></div>
+  <div class="list scroll grow">${listHTML(FLASHES.map(f => [f.n, `${f.sub} · ${f.list.length} ejemplos`, `<span class="end">★ ${flRec(f.id)}</span>`]))}</div>`;
+};
+H.flashsel = { A() { AU.sfx.ok(); startFlash(FLASHES[V.idx].id); }, B: backMenu };
+const backFlash = () => { AU.sfx.back(); go('flashsel', { idx: FLASHES.indexOf(F.mode) }); };
+function startFlash(id) {
+  const mode = FLASHES.find(f => f.id === id) || FLASHES[FLASHES.length - 1];
+  F = { mode, yes: mode.yes.toLowerCase(), deck: [], score: 0, streak: 0, best: 0, right: 0, wrong: 0, left: 60000, lock: false, iv: null };
   nextFlash();
   go('flash');
 }
+/* la lista entera barajada; si alguien la agota en una partida, se vuelve a barajar */
 function nextFlash() {
-  const wantOk = Math.random() < 0.45;
-  F.q = rnd(QS.filter(q => (q.k === 'ok') === wantOk && q !== F.last));
-  F.last = F.q;
+  if (!F.deck.length) F.deck = shuffle(F.mode.list);
+  F.q = F.deck.pop();
 }
-R.flash = () => `<div class="hud"><span class="chip">RELÁMPAGO</span><span class="timer" id="tm"><i></i></span><span class="pts" id="tn"></span><span class="pts">★ <span id="fs">${F.score}</span></span></div>
+R.flash = () => `<div class="hud"><span class="chip">${F.mode.n}</span><span class="timer" id="tm"><i></i></span><span class="pts" id="tn"></span><span class="pts">★ <span id="fs">${F.score}</span></span></div>
   <div class="qrow"><div class="who">${SP.robot(F.streak >= 3 ? 'cool' : 'brave')}</div><div class="panel arg scroll" id="arg">${argHTML(F.q.t, true)}</div></div>
-  <div class="verdict" id="vd">¿Falacia o argumento legítimo?${F.streak >= 2 ? ` · racha ×${F.streak}` : ''}</div>
-  <div class="duo fl2"><div class="opt" data-act="fal"><kbd>◂</kbd><span>ES FALACIA</span></div><div class="opt okopt" data-act="leg"><span>ES LEGÍTIMO</span><kbd>▸</kbd></div></div>`;
+  <div class="verdict" id="vd">¿Falacia o argumento ${F.yes}?${F.streak >= 2 ? ` · racha ×${F.streak}` : ''}</div>
+  <div class="duo fl2"><div class="opt" data-act="fal"><kbd>◂</kbd><span>ES FALACIA</span></div><div class="opt okopt" data-act="leg"><span>ES ${F.mode.yes}</span><kbd>▸</kbd></div></div>`;
 function flashClock() {
   const tm = $('#tm'), tn = $('#tn');
   if (!tm) return;
@@ -2174,13 +2395,15 @@ function flashAnswer(isFal) {
     AU.sfx.no(); setBot('surprised'); shake();
   }
   vd.className = 'verdict ' + (ok ? 'good' : 'bad');
-  vd.textContent = (ok ? '✔ ' : '✘ −3 s · ') + (real ? 'Falacia: ' + FAL[q.k].n : 'Era legítimo') + extra;
+  vd.textContent = (ok ? '✔ ' : '✘ −3 s · ') + (real ? 'Falacia: ' + FAL[q.k].n : 'Era ' + F.yes) + extra;
   F.lock = true;
   later(() => { F.lock = false; if (F.left <= 0) { endFlash(); return; } nextFlash(); render(); }, ok ? 550 : 1250);
 }
 function endFlash() {
   let rec = false;
-  if (F.score > (S.flash || 0)) { S.flash = F.score; rec = true; }
+  S.fl = S.fl || {};
+  if (F.score > flRec(F.mode.id)) { S.fl[F.mode.id] = F.score; rec = true; }
+  S.flash = Math.max(S.flash || 0, F.score);
   const xp = F.score * 15;
   addXP(xp);
   if (F.score >= 15) award('flash');
@@ -2190,20 +2413,20 @@ function endFlash() {
 }
 ACT.fal = () => flashAnswer(true);
 ACT.leg = () => flashAnswer(false);
-H.flash = { left: ACT.fal, L: ACT.fal, right: ACT.leg, R: ACT.leg, A() {}, B: backMenu, start: backMenu };
-LEG.flash = () => [['◂ L', 'falacia'], ['▸ R', 'legítimo'], ['B', 'salir']];
+H.flash = { left: ACT.fal, L: ACT.fal, right: ACT.leg, R: ACT.leg, A() {}, B: backFlash, start: backFlash };
+LEG.flash = () => [['◂ L', 'falacia'], ['▸ R', F.yes], ['B', 'salir']];
 R.flashend = () => {
   V.n = 2;
-  return `<div class="hud"><span class="chip">RELÁMPAGO</span><span class="ttl">¡Tiempo!</span><span class="pts">★ ${F.score}</span></div>
+  return `<div class="hud"><span class="chip">${F.mode.n}</span><span class="ttl">¡Tiempo!</span><span class="pts">★ ${F.score}</span></div>
   <div class="frow">${bot(V.rec ? 'star' : F.score >= 8 ? 'happy' : 'neutral')}<div class="bubble tail">${V.rec ? '<span class="banner neu">¡RÉCORD!</span>' : ''}<div>${F.score >= 15 ? '¡Reflejos de lógico!' : F.score >= 8 ? '¡Buen ritmo!' : 'Distinguir lo legítimo de lo falaz es lo más difícil. ¡Otra!'}</div></div></div>
   <div class="panel scroll grow">
-    <div class="sec"><b>PUNTOS</b><span class="big">${F.score}</span> · récord ${S.flash}</div>
+    <div class="sec"><b>PUNTOS</b><span class="big">${F.score}</span> · récord de esta versión ${flRec(F.mode.id)}</div>
     <div class="sec"><b>ACIERTOS</b>${F.right} de ${F.right + F.wrong} · mejor racha ×${F.best}</div>
     <div class="sec"><b>EXPERIENCIA</b>+${V.xp} XP</div>
   </div>
-  <div class="duo">${listHTML([['OTRA VEZ'], ['MENÚ']])}</div>`;
+  <div class="duo">${listHTML([['OTRA VEZ'], ['VERSIONES']])}</div>`;
 };
-H.flashend = { A() { AU.sfx.ok(); if (V.idx === 0) startFlash(); else go('menu', { idx: menuIdx }); }, B: backMenu };
+H.flashend = { A() { if (V.idx === 0) { AU.sfx.ok(); startFlash(F.mode.id); } else backFlash(); }, B: backFlash };
 
 /* ---------- falacidex ---------- */
 function dexDetail(k) {
@@ -2405,7 +2628,7 @@ try {
 } catch (e) { /* sin icono */ }
 
 applyVol();
-window.FalaciaAdvance = { go, render, press, answer, startRun, startFlash, skipType, state: () => V, run: () => run, flash: () => F, save: S, QS, FAL, DEX, robot: SP.robot };
+window.FalaciaAdvance = { go, render, press, answer, startRun, startFlash, skipType, state: () => V, run: () => run, flash: () => F, save: S, QS, FAL, DEX, FLASHES, robot: SP.robot };
 render();
 })();
 

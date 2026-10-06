@@ -13,7 +13,7 @@ Juego para aprender a detectar falacias, con aspecto de consola portátil. Está
 |---|---|
 | Aventura | Cuatro mundos, cada uno con una mini-clase y 12 desafíos: formales, relevancia, ambigüedad y presunción, causalidad y sesgos |
 | Clases con el sabio | Los conceptos clave (argumento, validez, solidez) y las 39 falacias, explicados página por página |
-| Relámpago | 60 segundos para decidir si cada argumento es una falacia o es legítimo |
+| Relámpago | 60 segundos para decidir si cada argumento es una falacia o no, en cuatro versiones: formales, informales de relevancia, el resto (ambigüedad, presunción y causalidad) y todas mezcladas. Cada lista tiene 100 ejemplos y sale barajada en cada partida |
 | Torneo | 15 preguntas mezcladas y solo 3 vidas |
 | Jefe | Una columna de opinión que esconde seis falacias |
 | Falacidex | El álbum de las falacias que ya capturaste |
