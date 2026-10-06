@@ -200,7 +200,13 @@ i { font-style: normal; }
 .bot.a-slow { animation: bob 2.2s steps(2) infinite; }
 .bot.a-shake { animation: shk .2s steps(2) infinite; }
 .bot.a-wobble { animation: wob 1.4s steps(4) infinite; transform-origin: 50% 90%; }
-.bot .bl, .bot .mt { visibility: hidden; }
+.bot.a-nod { animation: nod 1.6s steps(2) infinite; }
+.bot.a-no { animation: shk .9s steps(2) infinite; }
+.bot .bl, .bot .mt, .bot .sw, .bot .bw, .bot .mm { visibility: hidden; }
+.bot .sw { animation: swy 2s steps(1) infinite; }
+.bot .bw { animation: brw 3.8s steps(1) infinite; }
+.bot .mm { animation: mum 3.2s steps(1) infinite; }
+.bot.sage .bl { animation: blk 4.4s steps(1) infinite; }
 .bot.bk .bl { animation: blk 4.4s steps(1) infinite; }
 .bot.bk .ey { animation: eyh 4.4s steps(1) infinite; }
 .bot.talk .mt { animation: von .24s steps(1) infinite; }
@@ -219,6 +225,10 @@ i { font-style: normal; }
 @keyframes tilt { 50% { transform: rotate(-5deg); } }
 @keyframes shk { 50% { transform: translateX(3%); } }
 @keyframes wob { 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+@keyframes nod { 50% { transform: translateY(3%); } }
+@keyframes swy { 0% { visibility: hidden; } 50%, 100% { visibility: visible; } }
+@keyframes brw { 0% { visibility: hidden; } 58% { visibility: visible; } 72%, 100% { visibility: hidden; } }
+@keyframes mum { 0%, 12%, 24% { visibility: visible; } 6%, 18%, 30%, 100% { visibility: hidden; } }
 @keyframes blk { 0%, 93% { visibility: hidden; } 94%, 100% { visibility: visible; } }
 @keyframes eyh { 0%, 93% { visibility: visible; } 94%, 100% { visibility: hidden; } }
 @keyframes von { 0% { visibility: visible; } 50% { visibility: hidden; } }
@@ -317,7 +327,8 @@ i.h { visibility: hidden; }
 .lesson { font-size: 1.08em; }
 
 /* ---------- sabio ---------- */
-.sage { width: 3.7em; height: auto; float: left; margin: 0 .65em .3em 0; }
+.bot.sage { width: 4.6em; float: left; margin: 0 .65em .3em 0; }
+.narrow .bot.sage { width: 3.6em; }
 .say .ttl { font-family: var(--fs); font-size: 1.3em; line-height: 1; margin-bottom: .3em; color: var(--pri); }
 .say p { margin: 0 0 .5em; }
 .say p i { color: var(--ink2); }
@@ -455,7 +466,7 @@ i.h { visibility: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .bot, .bot *, .blink, .screen > *, .screen.shake, .opt, .foe .boss, .pips i, .hrt, .bigstars i, #fx .p { animation: none !important; }
-  .bot .bl, .bot .mt { visibility: hidden !important; }
+  .bot .bl, .bot .mt, .bot .sw, .bot .bw, .bot .mm { visibility: hidden !important; }
 }
 
 </style>
@@ -625,8 +636,8 @@ function grid(mood, part) {
   return g;
 }
 /* los detalles animados, agrupados por clase: cada grupo es una capa aparte */
-function fxLayers(mood) {
-  const m = MOODS[mood] || MOODS.neutral, by = {};
+function fxLayers(mood, table) {
+  const m = (table || MOODS)[mood] || MOODS.neutral, by = {};
   (m.fx || []).forEach(f => { (by[f[0]] = by[f[0]] || blank()); put(by[f[0]], GLYPH[f[1]], f[2], f[3], f[4]); });
   return Object.keys(by).map(k => [k, by[k]]);
 }
@@ -645,6 +656,87 @@ function robot(mood, cls) {
   const k = ['bot', 'm-' + mood, m.blink ? 'bk' : '', m.anim ? 'a-' + m.anim : '', cls || ''].filter(Boolean).join(' ');
   return `<span class="${k}" aria-hidden="true">${img(url(mood))}${m.blink ? img(url(mood, 'blink'), 'bl') : ''}${img(url(mood, 'talk'), 'mt')}`
     + fxLayers(mood).map(([c], i) => img(toUrl('fx:' + mood + ':' + i, () => fxLayers(mood)[i][1]), c)).join('') + '</span>';
+}
+
+/* ---------- el sabio: caras y pequeños movimientos sobre la figura de PixelLab ---------- */
+const SK = { K: '#000102', W: '#fbfdfd', G: '#a9bac5', g: '#8494a7', N: '#203d75', B: '#2d7ebb', S: '#b75141', D: '#d06a4f',
+             M: '#e7805e', R: '#e9805c', O: '#4a1620', P: '#ff8a80' };
+/* ojos: 6 de ancho desde x15 (el derecho, reflejado, desde x25), filas 17 a 19; «wide» empieza una fila antes */
+const SEYE = {
+  shut:  ['.SSSS.', 'KKKKKK', '.DDDD.'],
+  arc:   ['SKKKKS', 'KMMMMK', 'SMMMMS'],
+  side:  ['SKKKKS', 'KGWNKK', 'SWWBBS'],
+  up:    ['SKKKKS', 'KWNNWK', 'SWWWWS'],
+  stern: ['KKKKKK', 'KGNKKK', 'SWBBWS'],
+  sleep: ['.SSSS.', 'KMMMMK', 'SKKKKS'],
+  wide:  ['.KKKK.', 'KWWWWK', 'KWNNWK', 'SWBBWS']
+};
+/* boca: 10 de ancho desde x18, filas 25 a 27 */
+const SMOUTH = {
+  open:  ['gKKKKKKKKg', 'KgOOOOOOgK', '.gSRRRRSg.'],
+  grin:  ['gKKKKKKKKg', 'KKWWWWWWKK', '.gKKKKKKg.'],
+  smile: ['KSRRRRRRSK', 'gKKKKKKKKg'],
+  o:     ['gggKKKKggg', 'gggKOOKggg', '...gKKg...'],
+  frown: ['ggKKKKKKgg', 'gKggggggKg'],
+  hmm:   ['gggggggggg', 'ggggKKKKKg'],
+  small: ['gggggggggg', 'ggggKKgggg']
+};
+const INK1 = '#e8862a', INK2 = '#f0b400', INK3 = '#6a72b5';   // el sabio va sobre papel claro: detalles más oscuros que los de SILO
+/* n: nombre · eye/eyeR: ojos (same: los dos miran al mismo lado) · brow: cejas arriba (-1) o abajo (1)
+   mum: masculla · wag: mueve las cejas · fx: detalles animados como los de SILO */
+const SAGE = {
+  calm:      { n: 'Sereno',     blink: 1, wag: 1, anim: 'slow' },
+  happy:     { n: 'Contento',   eye: 'arc', mouth: 'grin', cheeks: 1, anim: 'nod' },
+  talk:      { n: 'Explicando', eye: 'side', same: 1, mum: 1, wag: 1, blink: 1, anim: 'slow' },
+  wink:      { n: 'Cómplice',   eyeR: 'arc', mouth: 'smile', cheeks: 1, wag: 1, anim: 'slow' },
+  think:     { n: 'Meditando',  eye: 'up', mouth: 'hmm', blink: 1, anim: 'tilt', fx: [['bobx', 'q', 41, 0, INK1]] },
+  surprised: { n: 'Asombrado',  eye: 'wide', brow: -1, mouth: 'o', anim: 'slow', fx: [['bobx', 'bang', 43, 0, RD]] },
+  stern:     { n: 'Severo',     eye: 'stern', brow: 1, mouth: 'frown', blink: 1, anim: 'no', fx: [['tw', 'bang', 43, 0, RD]] },
+  eureka:    { n: 'Inspirado',  brow: -1, mouth: 'smile', mum: 1, anim: 'nod',
+               fx: [['tw', 'plus', 2, 1, INK1], ['tw', 'plus', 43, 3, INK2], ['tw d2', 'plus', 5, 6, INK2], ['tw d2', 'plus', 40, 0, INK1]] },
+  sleepy:    { n: 'Dormitando', eye: 'sleep', mouth: 'small', anim: 'slow', fx: [['fl', 'z', 39, 5, INK3], ['fl d2', 'Z', 42, 0, INK3]] }
+};
+const BROWS = [[15, 19], [26, 30]], SWAY = { 37: [19, 28], 38: [19, 27], 39: [20, 26], 40: [21, 25] };
+function patch(g, rows, x, y, mirror) {
+  rows.forEach((row, j) => {
+    const s = mirror ? row.split('').reverse().join('') : row;
+    for (let i = 0; i < s.length; i++) if (s[i] !== '.') g[y + j][x + i] = SK[s[i]];
+  });
+}
+/* el sabio con una emoción. o.blink: ojos cerrados · o.talk: boca abierta · o.brow: cejas arriba · o.sway: la punta de la barba a un lado */
+function sageGrid(mood, o) {
+  const m = SAGE[mood] || SAGE.calm, g = gridOf('sabio'), b = gridOf('sabio');
+  o = o || {};
+  const brow = o.brow ? -1 : (m.brow || 0);
+  BROWS.forEach(([x0, x1]) => {
+    for (let x = x0; x <= x1; x++) {
+      if (brow < 0) { for (let y = 12; y <= 15; y++) g[y][x] = b[y + 1][x]; g[16][x] = SK.S; }
+      if (brow > 0) for (let y = 13; y <= 17; y++) g[y][x] = b[y - 1][x];
+    }
+  });
+  const eye = (name, x, mirror) => { if (name) patch(g, SEYE[name], x, name === 'wide' ? 16 : 17, mirror); };
+  if (o.blink) { eye('shut', 15); eye('shut', 25, true); }
+  else { eye(m.eye, 15); eye(m.eyeR || m.eye, 25, !m.same); }
+  const mouth = o.talk ? 'open' : m.mouth;
+  if (mouth) patch(g, SMOUTH[mouth], 18, 25);
+  if (m.cheeks) { patch(g, ['PP'], 16, 21); patch(g, ['PP'], 28, 21); }
+  if (o.sway) Object.keys(SWAY).forEach(y => { const [a, z] = SWAY[y], r = g[y].slice(); for (let x = a + 1; x <= z; x++) g[y][x] = r[x - 1]; });
+  return g;
+}
+/* solo los píxeles que cambian respecto de la cara normal: así cada movimiento es una capa independiente */
+function sageDiff(mood, o) {
+  const a = sageGrid(mood), z = sageGrid(mood, o);
+  return z.map((row, y) => row.map((v, x) => v === a[y][x] ? null : v));
+}
+function sage(mood, cls) {
+  if (!SAGE[mood]) mood = 'calm';
+  const m = SAGE[mood], img = (key, make, c) => `<img${c ? ` class="${c}"` : ''} src="${toUrl('sabio:' + mood + ':' + key, make)}" alt="">`;
+  const k = ['bot', 'sage', 's-' + mood, m.anim ? 'a-' + m.anim : '', cls || ''].filter(Boolean).join(' ');
+  return `<span class="${k}" aria-hidden="true">${img('main', () => sageGrid(mood))}${img('sw', () => sageDiff(mood, { sway: 1 }), 'sw')}`
+    + (m.wag ? img('bw', () => sageDiff(mood, { brow: 1 }), 'bw') : '')
+    + (m.mum ? img('mm', () => sageDiff(mood, { talk: 1 }), 'mm') : '')
+    + (m.blink ? img('bl', () => sageDiff(mood, { blink: 1 }), 'bl') : '')
+    + fxLayers(mood, SAGE).map(([c], i) => img('fx' + i, () => fxLayers(mood, SAGE)[i][1], c)).join('') + '</span>';
 }
 const still = (name, cls) => `<img class="${cls}" src="${toUrl(name, () => gridOf(name))}" alt="">`;
 
@@ -736,7 +828,7 @@ const HEART = ['.KK.KK.', 'KRRKRRK', 'KRWRRRK', 'KRRRRRK', '.KRRRK.', '..KRK..',
 const api = {
   MOODS, robot, grid, url, gridOf,
   moods: Object.keys(MOODS),
-  sage: cls => still('sabio', cls || 'px sage'),
+  SAGE, sage, sageGrid, sageDiff, sageMoods: Object.keys(SAGE),
   boss: cls => still('jefe', cls || 'px boss'),
   icon: (name, cls) => pix(ICONS[name].rows, ICONS[name].pal, cls || 'px ico'),
   heart: full => pix(HEART, full ? { K, R: '#e03a2f', W: '#ffb3a8' } : { K: '#6b6591', R: '#3a3566', W: '#3a3566' }, 'px hrt'),
@@ -1428,25 +1520,26 @@ const SAGEROWS=[
 const SAGECOL={0:'#1a1f4e',1:'#6a72b5',2:'#f4cfa4',3:'#ffffff',4:'#ffc83d',6:'#d98c6c'};
 
 const OPEN=['Escucha bien, joven discípulo:','Acaricia tu barba imaginaria y atiende:','¡Por las barbas de Aristóteles!','Hmm, hmm… mira este caso:','Anota esto en tu papiro:','Esta es de las que más engañan:'];
+const OPENM=['talk','wink','surprised','think','eureka','stern'];   // la cara del sabio para cada entrada
 
 const CLASES_DEF=[
  {n:'CONCEPTOS CLAVE',sub:'Argumento, validez, solidez y falacia',pages:[
-  {t:'EL ARGUMENTO',say:`<p>Saludos, joven discípulo. Soy el Sabio Barbonio y mi barba tiene dos mil años de lógica.</p><p>Un <b>argumento</b> es un conjunto de enunciados en el que uno, la <b>conclusión</b>, se presenta apoyado por los demás, las <b>premisas</b>.</p><p>Pistas de conclusión: <i>por lo tanto, luego, así que, en consecuencia</i>. Pistas de premisa: <i>porque, dado que, puesto que, ya que</i>.</p>`},
-  {t:'¿ES UN ARGUMENTO?',say:`<p>No todo texto argumenta. Descripción, narración y opinión sin razones no son argumentos.</p><p>Ojo con la <b>explicación</b>: responde <i>¿por qué ocurrió?</i> «El vaso se rompió porque se cayó».</p><p>El <b>argumento</b> responde <i>¿por qué debería yo creerlo?</i> Esa es la pregunta que me hago con cada texto.</p>`},
-  {t:'VALIDEZ',say:`<p>Un argumento es <b>válido</b> cuando es IMPOSIBLE que sus premisas sean verdaderas y su conclusión falsa a la vez.</p><div class="box eg"><div class="line"><span class="pn">(1)</span><span class="pt">Todos los peces vuelan.</span></div><div class="line"><span class="pn">(2)</span><span class="pt">Los delfines son peces.</span></div><div class="sep"></div><div class="line con"><span class="pn">∴</span><span class="pt">Los delfines vuelan.</span></div></div><p>Es válido y todo es falso: la validez habla de la <b>forma</b>, no de la verdad.</p><p class="ojo"><b>Regla de oro:</b> la verdad es de los enunciados; la validez, de los argumentos. Nadie dice «ese argumento es verdad».</p>`},
-  {t:'SOLIDEZ',say:`<p>Un argumento es <b>sólido</b> cuando es válido <i>y además</i> todas sus premisas son verdaderas. Solo entonces estamos obligados a aceptar la conclusión.</p><p>Hay dos maneras de criticar:</p><p>1. «Tu conclusión no se sigue» (ataco la validez).<br>2. «Esa premisa es falsa» (ataco la solidez).</p><p class="ojo">Decir «tu conclusión es falsa» no es una crítica: es repetir lo contrario en voz alta.</p>`},
-  {t:'¿QUÉ ES UNA FALACIA?',say:`<p>Una <b>falacia</b> es un patrón de razonamiento defectuoso que, pese a serlo, resulta persuasivo. Parece apoyar la conclusión sin apoyarla.</p><p>No la confundas con tres cosas:</p><p>• <b>Mentira</b>: la falacia suele ser un error honesto.<br>• <b>Premisa falsa</b>: puede partir de datos impecables.<br>• <b>Conclusión falsa</b>: puede llegar a algo verdadero.</p><div class="box eg">«La Tierra es redonda porque lo dice mi horóscopo.»</div><p>Conclusión verdadera, argumento pésimo. Lo que falla es el <b>apoyo</b>.</p>`},
-  {t:'FORMAL E INFORMAL',say:`<p>En una falacia <b>formal</b> el defecto está en el esquema. Se detecta sin entender de qué se habla, y se refuta con un <b>contraejemplo</b>.</p><p>En una falacia <b>informal</b> el defecto está en el contenido y el contexto. El mismo esquema puede ser bueno o malo según quién hable y de qué.</p><p class="ojo">Las formales se <b>refutan</b>. Las informales se <b>discuten</b>: hay que explicar por qué, en este caso, lo que se ofrece no sirve.</p>`},
-  {t:'LOS TRES CRITERIOS',say:`<p>Para un argumento no deductivo no exigimos validez sino <b>fuerza</b>. Un buen argumento cumple tres criterios:</p><p>• <b>Aceptabilidad</b>: ¿son creíbles las premisas para quien aún no acepta la conclusión?<br>• <b>Relevancia</b>: ¿tienen que ver con la conclusión?<br>• <b>Suficiencia</b>: ¿son bastantes para ese salto?</p><p>Cada familia de falacias informales viola uno de ellos. Ese es el mapa del curso.</p>`},
-  {t:'LA FALACIA DE LA FALACIA',say:`<p>El error que se comete justo después de aprender todo esto: «tu argumento contiene una falacia, luego tu conclusión es falsa».</p><p>Es falaz. Un mal argumento solo muestra que <i>ese</i> argumento no sirve. La conclusión sigue en pie, esperando uno mejor.</p><p class="ojo"><b>Higiene del buen lógico:</b> nombra la falacia y explica por qué lo es aquí. Antes de acusar, aplica el <b>hombre de hierro</b>: reconstruye el argumento ajeno en su versión más fuerte.</p>`}
+  {t:'EL ARGUMENTO',m:'happy',say:`<p>Saludos, joven discípulo. Soy el Sabio Barbonio y mi barba tiene dos mil años de lógica.</p><p>Un <b>argumento</b> es un conjunto de enunciados en el que uno, la <b>conclusión</b>, se presenta apoyado por los demás, las <b>premisas</b>.</p><p>Pistas de conclusión: <i>por lo tanto, luego, así que, en consecuencia</i>. Pistas de premisa: <i>porque, dado que, puesto que, ya que</i>.</p>`},
+  {t:'¿ES UN ARGUMENTO?',m:'think',say:`<p>No todo texto argumenta. Descripción, narración y opinión sin razones no son argumentos.</p><p>Ojo con la <b>explicación</b>: responde <i>¿por qué ocurrió?</i> «El vaso se rompió porque se cayó».</p><p>El <b>argumento</b> responde <i>¿por qué debería yo creerlo?</i> Esa es la pregunta que me hago con cada texto.</p>`},
+  {t:'VALIDEZ',m:'eureka',say:`<p>Un argumento es <b>válido</b> cuando es IMPOSIBLE que sus premisas sean verdaderas y su conclusión falsa a la vez.</p><div class="box eg"><div class="line"><span class="pn">(1)</span><span class="pt">Todos los peces vuelan.</span></div><div class="line"><span class="pn">(2)</span><span class="pt">Los delfines son peces.</span></div><div class="sep"></div><div class="line con"><span class="pn">∴</span><span class="pt">Los delfines vuelan.</span></div></div><p>Es válido y todo es falso: la validez habla de la <b>forma</b>, no de la verdad.</p><p class="ojo"><b>Regla de oro:</b> la verdad es de los enunciados; la validez, de los argumentos. Nadie dice «ese argumento es verdad».</p>`},
+  {t:'SOLIDEZ',m:'talk',say:`<p>Un argumento es <b>sólido</b> cuando es válido <i>y además</i> todas sus premisas son verdaderas. Solo entonces estamos obligados a aceptar la conclusión.</p><p>Hay dos maneras de criticar:</p><p>1. «Tu conclusión no se sigue» (ataco la validez).<br>2. «Esa premisa es falsa» (ataco la solidez).</p><p class="ojo">Decir «tu conclusión es falsa» no es una crítica: es repetir lo contrario en voz alta.</p>`},
+  {t:'¿QUÉ ES UNA FALACIA?',m:'surprised',say:`<p>Una <b>falacia</b> es un patrón de razonamiento defectuoso que, pese a serlo, resulta persuasivo. Parece apoyar la conclusión sin apoyarla.</p><p>No la confundas con tres cosas:</p><p>• <b>Mentira</b>: la falacia suele ser un error honesto.<br>• <b>Premisa falsa</b>: puede partir de datos impecables.<br>• <b>Conclusión falsa</b>: puede llegar a algo verdadero.</p><div class="box eg">«La Tierra es redonda porque lo dice mi horóscopo.»</div><p>Conclusión verdadera, argumento pésimo. Lo que falla es el <b>apoyo</b>.</p>`},
+  {t:'FORMAL E INFORMAL',m:'talk',say:`<p>En una falacia <b>formal</b> el defecto está en el esquema. Se detecta sin entender de qué se habla, y se refuta con un <b>contraejemplo</b>.</p><p>En una falacia <b>informal</b> el defecto está en el contenido y el contexto. El mismo esquema puede ser bueno o malo según quién hable y de qué.</p><p class="ojo">Las formales se <b>refutan</b>. Las informales se <b>discuten</b>: hay que explicar por qué, en este caso, lo que se ofrece no sirve.</p>`},
+  {t:'LOS TRES CRITERIOS',m:'eureka',say:`<p>Para un argumento no deductivo no exigimos validez sino <b>fuerza</b>. Un buen argumento cumple tres criterios:</p><p>• <b>Aceptabilidad</b>: ¿son creíbles las premisas para quien aún no acepta la conclusión?<br>• <b>Relevancia</b>: ¿tienen que ver con la conclusión?<br>• <b>Suficiencia</b>: ¿son bastantes para ese salto?</p><p>Cada familia de falacias informales viola uno de ellos. Ese es el mapa del curso.</p>`},
+  {t:'LA FALACIA DE LA FALACIA',m:'stern',say:`<p>El error que se comete justo después de aprender todo esto: «tu argumento contiene una falacia, luego tu conclusión es falsa».</p><p>Es falaz. Un mal argumento solo muestra que <i>ese</i> argumento no sirve. La conclusión sigue en pie, esperando uno mejor.</p><p class="ojo"><b>Higiene del buen lógico:</b> nombra la falacia y explica por qué lo es aquí. Antes de acusar, aplica el <b>hombre de hierro</b>: reconstruye el argumento ajeno en su versión más fuerte.</p>`}
  ]},
  {n:'FALACIAS FORMALES',sub:'Cuando el esquema está roto',fam:'formal'},
  {n:'RELEVANCIA',sub:'Razones sobre otra cosa',fam:'relev'},
  {n:'AMBIGÜEDAD Y PRESUNCIÓN',sub:'Palabras que se mueven, premisas que se cuelan',fam:'amb'},
  {n:'CAUSALIDAD Y SESGOS',sub:'Cuando la evidencia no alcanza',fam:'caus'},
  {n:'EL CHECKLIST FINAL',sub:'Cinco preguntas para cualquier argumento',pages:[
-  {t:'LAS CINCO PREGUNTAS',say:`<p>Ante cualquier argumento, en cualquier contexto, pregúntate:</p><p><b>1.</b> ¿Cuál es exactamente la conclusión y cuáles las premisas?<br><b>2.</b> ¿Se sigue la conclusión aunque las premisas fueran verdaderas? <i>(validez: formales)</i><br><b>3.</b> ¿Las premisas hablan de lo que está en discusión? <i>(relevancia)</i><br><b>4.</b> ¿Las aceptaría quien aún no acepta la conclusión? <i>(aceptabilidad)</i><br><b>5.</b> ¿Alcanzan? ¿Qué alternativas quedaron sin descartar? <i>(suficiencia)</i></p>`},
-  {t:'MI ÚLTIMO CONSEJO',say:`<p>Casi toda falacia informal tiene un <b>primo legítimo</b>. Saber distinguirlos vale más que memorizar nombres en latín.</p><p>Las falacias se detectan mejor <b>en uno mismo</b>, que es donde más duelen y donde más se usan.</p><p class="ojo">Contra una forma inválida, un contraejemplo vale más que mil objeciones. Ahora ve y practica en la Aventura. ¡Que tu barba crezca con tu razón!</p>`}
+  {t:'LAS CINCO PREGUNTAS',m:'think',say:`<p>Ante cualquier argumento, en cualquier contexto, pregúntate:</p><p><b>1.</b> ¿Cuál es exactamente la conclusión y cuáles las premisas?<br><b>2.</b> ¿Se sigue la conclusión aunque las premisas fueran verdaderas? <i>(validez: formales)</i><br><b>3.</b> ¿Las premisas hablan de lo que está en discusión? <i>(relevancia)</i><br><b>4.</b> ¿Las aceptaría quien aún no acepta la conclusión? <i>(aceptabilidad)</i><br><b>5.</b> ¿Alcanzan? ¿Qué alternativas quedaron sin descartar? <i>(suficiencia)</i></p>`},
+  {t:'MI ÚLTIMO CONSEJO',m:'wink',say:`<p>Casi toda falacia informal tiene un <b>primo legítimo</b>. Saber distinguirlos vale más que memorizar nombres en latín.</p><p>Las falacias se detectan mejor <b>en uno mismo</b>, que es donde más duelen y donde más se usan.</p><p class="ojo">Contra una forma inválida, un contraejemplo vale más que mil objeciones. Ahora ve y practica en la Aventura. ¡Que tu barba crezca con tu razón!</p>`}
  ]}
 ];
 
@@ -2215,14 +2308,14 @@ function unitPages(u) {
   const U = CLASES_DEF[u];
   if (!U._p) U._p = U.pages || DEX.filter(k => FAL[k].f === U.fam).map((k, i) => {
     const Fa = FAL[k], q = QS.find(x => x.k === k);
-    return { k, t: Fa.n.toUpperCase(), say: `<p>${OPEN[i % OPEN.length]} <b>${Fa.n}</b>.</p>${q ? `<div class="eg">${argHTML(q.t, true)}</div>` : ''}<p>${esc(Fa.d)}</p><p class="ojo"><b>¡OJO!</b> ${esc(Fa.tip)}</p>${Fa.ce ? `<p><b>Contraejemplo:</b></p><div class="ce">${esc(Fa.ce)}</div>` : ''}` };
+    return { k, m: OPENM[i % OPEN.length], t: Fa.n.toUpperCase(), say: `<p>${OPEN[i % OPEN.length]} <b>${Fa.n}</b>.</p>${q ? `<div class="eg">${argHTML(q.t, true)}</div>` : ''}<p>${esc(Fa.d)}</p><p class="ojo"><b>¡OJO!</b> ${esc(Fa.tip)}</p>${Fa.ce ? `<p><b>Contraejemplo:</b></p><div class="ce">${esc(Fa.ce)}</div>` : ''}` };
   });
   return U._p;
 }
 R.clases = () => {
   V.n = CLASES_DEF.length;
   return `<div class="hud"><span class="chip">CLASES</span><span class="ttl">El Sabio Barbonio</span><span class="pts">${Object.keys(S.units).length}/${CLASES_DEF.length}</span></div>
-  <div class="panel say" style="flex:none">${SP.sage()}<p>Bienvenido, joven. Mi barba tiene dos mil años de lógica. ¿Qué lección quieres hoy?</p></div>
+  <div class="panel say" style="flex:none">${SP.sage('happy')}<p>Bienvenido, joven. Mi barba tiene dos mil años de lógica. ¿Qué lección quieres hoy?</p></div>
   <div class="list scroll grow">${listHTML(CLASES_DEF.map((c, i) => [c.n, `${c.sub} · ${unitPages(i).length} páginas`, S.units[i] ? '<span class="end done">✔</span>' : '']))}</div>`;
 };
 H.clases = { A() { AU.sfx.ok(); AU.sfx.sage(); go('clase', { u: V.idx, pg: 0 }); }, B: backMenu };
@@ -2231,10 +2324,13 @@ R.clase = () => {
   V.np = unitPages(V.u).length;
   if (P.k && !S.seen[P.k]) { S.seen[P.k] = 1; save(); }
   return `<div class="hud"><span class="chip">${U.n}</span><span class="ttl"></span><span class="pts">${V.pg + 1}/${V.np}</span></div>
-  <div class="panel say scroll grow">${SP.sage()}<div class="ttl">${P.t}</div>${P.say}</div>
+  <div class="panel say scroll grow">${SP.sage(P.m)}<div class="ttl">${P.t}</div>${P.say}</div>
   <div class="tip"><b>A</b> ${V.pg < V.np - 1 ? 'siguiente' : 'terminar'} · <b>L R</b> página · <b>B</b> lista</div>`;
 };
-AFTER.clase = () => { let n = 0; const iv = setInterval(() => { AU.blip('sage'); if (++n > 5) clearInterval(iv); }, 70); timers.push(iv); };
+/* si nadie pasa la página en un buen rato, el sabio se queda dormido */
+const doze = () => later(() => { const e = app.querySelector('.sage'); if (e) e.outerHTML = SP.sage('sleepy'); }, 45000);
+AFTER.clases = doze;
+AFTER.clase = () => { doze(); let n = 0; const iv = setInterval(() => { AU.blip('sage'); if (++n > 5) clearInterval(iv); }, 70); timers.push(iv); };
 H.clase = {
   A() {
     if (V.pg < V.np - 1) { V.pg++; render(); return; }
