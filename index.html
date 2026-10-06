@@ -2363,7 +2363,7 @@ const flRec = id => (S.fl && S.fl[id]) || 0;
 R.flashsel = () => {
   V.n = FLASHES.length;
   return `<div class="hud"><span class="chip">RELÁMPAGO</span><span class="ttl">Elige una versión</span><span class="pts">60 s</span></div>
-  <div class="frow">${bot('surprised')}<div class="bubble tail">¿Falacia o no? Cada lista sale barajada de nuevo en cada partida. Acierto: +1 punto y +1 segundo. Fallo: −3 segundos.</div></div>
+  <div class="frow">${bot('surprised')}<div class="bubble tail">¿Falacia o no? Cada lista sale barajada de nuevo en cada partida. Acierto: +1 punto y +2 segundos. Fallo: −1 segundo.</div></div>
   <div class="list scroll grow">${listHTML(FLASHES.map(f => [f.n, `${f.sub} · ${f.list.length} ejemplos`, `<span class="end">★ ${flRec(f.id)}</span>`]))}</div>`;
 };
 H.flashsel = { A() { AU.sfx.ok(); startFlash(FLASHES[V.idx].id); }, B: backMenu };
@@ -2409,19 +2409,19 @@ function flashAnswer(isFal) {
   if (F.lock || F.left <= 0) return;
   const q = F.q, real = q.k !== 'ok', ok = real === isFal, vd = $('#vd');
   S.seen[q.k] = 1;
-  let extra = ' · +1 s';
+  let extra = ' · +2 s';
   if (ok) {
     F.score++; F.right++; F.streak++; F.best = Math.max(F.best, F.streak);
-    F.left += 1000;   // cada acierto devuelve un segundo; cada cinco seguidos, tres más
-    if (F.streak % 5 === 0) { F.left += 3000; extra = ' · ¡+4 s!'; }
+    F.left += 2000;   // cada acierto suma dos segundos; cada cinco seguidos, tres más
+    if (F.streak % 5 === 0) { F.left += 3000; extra = ' · ¡+5 s!'; }
     AU.sfx.ok(); setBot(F.streak >= 3 ? 'cool' : 'happy');
     $('#fs').textContent = F.score;
   } else {
-    F.wrong++; F.streak = 0; F.left -= 3000;
+    F.wrong++; F.streak = 0; F.left -= 1000;
     AU.sfx.no(); setBot('surprised'); shake();
   }
   vd.className = 'verdict ' + (ok ? 'good' : 'bad');
-  vd.textContent = (ok ? '✔ ' : '✘ −3 s · ') + (real ? 'Falacia: ' + FAL[q.k].n : 'Era ' + F.yes) + (ok ? extra : '');
+  vd.textContent = (ok ? '✔ ' : '✘ −1 s · ') + (real ? 'Falacia: ' + FAL[q.k].n : 'Era ' + F.yes) + (ok ? extra : '');
   F.lock = true;
   later(() => { F.lock = false; if (F.left <= 0) { endFlash(); return; } nextFlash(); render(); }, ok ? 550 : 1250);
 }
