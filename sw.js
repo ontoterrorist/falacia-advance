@@ -1,6 +1,6 @@
 /* Falacia Advance — service worker: deja la app guardada en el teléfono para jugar sin conexión. */
 const PREFIX = 'falacia-advance-';
-const CACHE = PREFIX + 'c0355e6fab';
+const CACHE = PREFIX + 'c7f874751a';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
