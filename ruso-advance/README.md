@@ -2,7 +2,7 @@
 
 Una app para aprender ruso en el navegador **conversando con Masha**: una profesora de San Petersburgo, medio enojona y bastante cínica, pero amable en el fondo. Vive con su gato Pelmén y toma demasiado té.
 
-**Abrirla:** https://ontoterrorist.github.io/ruso-advance/ (cuando GitHub Pages esté activado; también funciona abriendo `index.html` con un servidor local)
+**Abrirla:** cuando esta rama se fusione con `main`, quedará en https://ontoterrorist.github.io/falacia-advance/ruso-advance/ (o en su propio repositorio, si se mueve ahí). También funciona en local con cualquier servidor estático.
 
 ![Una conversación con Masha](captura-dialogo.png)
 ![Las lecciones por niveles](captura-lecciones.png)
