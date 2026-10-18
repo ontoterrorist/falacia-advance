@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Aprende ruso conversando con Masha: diálogos por niveles, gramática poco a poco y repetición espaciada.">
+<meta name="theme-color" content="#15122b">
+<meta property="og:title" content="Ruso Advance">
+<meta property="og:description" content="Aprende ruso conversando con Masha: diálogos por niveles, gramática poco a poco y repetición espaciada.">
+<meta property="og:image" content="icons/icon-512.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ruso Advance">
+<title>Ruso Advance</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="#home"><span class="logo-ru">Ruso</span> <span class="logo-adv">Advance</span></a>
+  <nav class="nav" id="nav">
+    <a href="#home" data-r="home"><span class="ni">⌂</span><span>Inicio</span></a>
+    <a href="#path" data-r="path"><span class="ni">☰</span><span>Lecciones</span></a>
+    <a href="#review" data-r="review"><span class="ni">↻</span><span>Repaso</span><b class="badge" id="badge" hidden></b></a>
+    <a href="#notes" data-r="notes"><span class="ni">Я</span><span>Notas</span></a>
+    <a href="#settings" data-r="settings"><span class="ni">⚙</span><span>Ajustes</span></a>
+  </nav>
+</header>
+<div class="wrap">
+  <aside class="side" id="side">
+    <div class="avatar" id="avatar"></div>
+    <div class="bubble" id="bubble" aria-live="polite"></div>
+  </aside>
+  <main id="main" tabindex="-1"></main>
+</div>
+<script src="masha.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
