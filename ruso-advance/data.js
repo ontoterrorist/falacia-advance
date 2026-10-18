@@ -7,17 +7,36 @@
    {u:[[ru, es, comentario], ...], k} es tu turno: las k primeras opciones son correctas. */
 
 const SPEAKERS = {
-  olga: { name: "О'льга Петро'вна", color: '#4a6fa5' },
-  waiter: { name: "Официа'нт", color: '#3f8f6b' },
-  seller: { name: "Продавщи'ца", color: '#b06a2c' },
-  doctor: { name: "Врач", color: '#2f7f8f' },
+  olga: { name: "О'льга Петро'вна" },
+  waiter: { name: "Официа'нт" },
+  seller: { name: "Продавщи'ца" },
+  doctor: { name: "Врач" },
+  vadim: { name: "Вади'м" },
+  kassir: { name: "Касси'р" },
+  artyom: { name: "Артём" },
+  nina: { name: "Ни'на Петро'вна" },
+  galia: { name: "Ба'ба Га'ля" },
+  katia: { name: "Ка'тя" },
+  woman: { name: "Же'нщина" },
+  passer: { name: "Прохо'жий" },
+  provod: { name: "Проводни'ца" },
+  sergei: { name: "Серге'й" },
+  student: { name: "Ли'дия Миха'йловна" },
+  arkady: { name: "Арка'дий" },
+  dima: { name: "Ди'ма" },
 };
 
 const LEVELS = [
-  { id: 1, ru: "Знако'мство", es: 'Primeros encuentros', note: 'Saludar, presentarte y sobrevivir a una charla corta.' },
-  { id: 2, ru: "Мой мир", es: 'Mi mundo', note: 'Familia, trabajo, números, cafés y calles.' },
-  { id: 3, ru: "Ка'ждый день", es: 'La vida diaria', note: 'Rutinas, ayer, mañana, ir y venir, comprar y el clima.' },
-  { id: 4, ru: "Настоя'щие разгово'ры", es: 'Conversaciones de verdad', note: 'Médicos, obligaciones, opiniones y recuerdos.' },
+  { id: 1, ru: "Знако'мство", es: 'Primeros encuentros', note: 'Saludar, presentarse, pedir en un café, moverse por la ciudad y hablar de gustos.' },
+  { id: 2, ru: "Ка'ждый день", es: 'La vida diaria', note: 'Rutinas, pasado y futuro, compras, clima, médico y opiniones.' },
+  { id: 3, ru: "Семе'стр в Петербу'рге", es: 'Un semestre en Petersburgo', note: 'Plurales, adjetivos, horas, fechas y los casos en serio.' },
+  { id: 4, ru: "Но'вый дом", es: 'Una casa nueva', note: 'Buscar departamento, muebles, comparar, который, свой y себя.' },
+  { id: 5, ru: "В доро'гу!", es: 'De viaje', note: 'Verbos de movimiento con prefijos, Moscú y el Transiberiano.' },
+  { id: 6, ru: "Пра'здники", es: 'Fiestas y tradiciones', note: 'Cumpleaños, Año Nuevo, Navidad, banya y una boda.' },
+  { id: 7, ru: "Рабо'та", es: 'El trabajo', note: 'Condicional, чтобы, adjetivos cortos y el registro formal.' },
+  { id: 8, ru: "Культу'ра", es: 'Cultura', note: 'Participios, gerundios, ballet, Pushkin, diminutivos y refranes.' },
+  { id: 9, ru: "Ле'то на да'че", es: 'Verano en la dacha', note: 'Aspecto avanzado, prefijos de matiz, partículas y setas.' },
+  { id: 10, ru: "Свобо'дно", es: 'Con soltura', note: 'Ruso coloquial, argumentar, contar historias y lo que viene.' },
 ];
 
 const LESSONS = [
@@ -284,12 +303,12 @@ const LESSONS = [
         { q: "Ты хо'чешь ___?", es: '¿Quieres pizza?', o: ["пи'ццу", "пи'цца", "пи'цце"], x: 'Пицца → пиццу.' },
       ],
     },
-    outro: 'Fin del nivel uno, casi. Ya pides té. En Rusia eso es medio idioma.',
+    outro: 'Ya pides té. En Rusia eso es medio idioma.',
   },
 
   /* ───────────── NIVEL 2 ───────────── */
   {
-    id: 'l7', level: 2, ru: "Семья'", es: 'La familia',
+    id: 'l7', level: 1, ru: "Семья'", es: 'La familia',
     scene: 'Masha te enseña una foto vieja de su familia. Se nota que la eligió con cuidado. No lo admitirá.',
     intro: 'Hoy: la familia. La mía es normal. Bueno. Normal para Rusia.',
     dialog: [
@@ -332,7 +351,7 @@ const LESSONS = [
     outro: 'Baba Galia te mandaría pelmeni si pudiera. Yo no, yo te mando tarea.',
   },
   {
-    id: 'l8', level: 2, ru: "Рабо'та", es: 'El trabajo',
+    id: 'l8', level: 1, ru: "Рабо'та", es: 'El trabajo',
     scene: 'Masha corrige tareas mientras habla contigo. No deja de suspirar.',
     intro: 'Hoy hablamos del trabajo y vas a conjugar tu primer verbo de verdad. Seis formas. Respira.',
     dialog: [
@@ -375,7 +394,7 @@ const LESSONS = [
     outro: 'Seis formas de un verbo. Y sigues vivo. Impresionante.',
   },
   {
-    id: 'l9', level: 2, ru: "Ско'лько тебе' лет?", es: '¿Cuántos años tienes?',
+    id: 'l9', level: 1, ru: "Ско'лько тебе' лет?", es: '¿Cuántos años tienes?',
     scene: 'Es el cumpleaños de Pelmén. Masha le compró un pastel de pescado. Él lo ignora.',
     intro: 'Números y edades. Y una pregunta que no debes hacerme. Ya verás cuál.',
     dialog: [
@@ -417,7 +436,7 @@ const LESSONS = [
     outro: 'Ya cuentas hasta diez. Y sabes que tengo veintiocho. Esa información muere contigo.',
   },
   {
-    id: 'l10', level: 2, ru: "В кафе'", es: 'En el café',
+    id: 'l10', level: 1, ru: "В кафе'", es: 'En el café',
     scene: 'Viajaste a Petersburgo. Masha te lleva a su café favorito. Afuera llueve, claro.',
     intro: 'Hoy pides comida de verdad. Y vuelve el acusativo de la lección seis. Te dije que volvería.',
     dialog: [
@@ -463,7 +482,7 @@ const LESSONS = [
     outro: 'Comiste, bebiste y no pagaste. Ya eres un poco ruso.',
   },
   {
-    id: 'l11', level: 2, ru: "Где метро'?", es: '¿Dónde está el metro?',
+    id: 'l11', level: 1, ru: "Где метро'?", es: '¿Dónde está el metro?',
     scene: 'Te perdiste en Petersburgo. Llamas a Masha. Contesta como si la hubieras despertado. Lo hiciste.',
     intro: 'Hoy: dónde están las cosas. Derecha, izquierda, recto. Y tu segundo caso: el prepositivo.',
     dialog: [
@@ -511,7 +530,7 @@ const LESSONS = [
     outro: 'Encontraste el metro. Con solo cuarenta minutos de retraso. Progreso.',
   },
   {
-    id: 'l12', level: 2, ru: "Что ты лю'бишь?", es: '¿Qué te gusta?',
+    id: 'l12', level: 1, ru: "Что ты лю'бишь?", es: '¿Qué te gusta?',
     scene: 'Una tarde tranquila. Masha pone música en el fondo y finge que no le importa lo que pienses de ella.',
     intro: 'Hoy: gustos. Y dos maneras de decirlo. Una es directa, como yo. La otra es educada, como tú.',
     dialog: [
@@ -548,12 +567,12 @@ const LESSONS = [
         { q: "Он ___ спать.", es: 'A él le encanta dormir.', o: ["лю'бит", "люблю'", "лю'бят"], x: 'Он любит.' },
       ],
     },
-    outro: 'Fin del nivel dos. Te gusta el ruso. No lo niegues. Yo lo sé todo.',
+    outro: 'Fin del nivel uno. Te gusta el ruso. No lo niegues. Yo lo sé todo.',
   },
 
   /* ───────────── NIVEL 3 ───────────── */
   {
-    id: 'l13', level: 3, ru: "Мой день", es: 'Mi día',
+    id: 'l13', level: 2, ru: "Мой день", es: 'Mi día',
     scene: 'Son las 10:15. Masha acaba de despertarse y te está dando clase. No está claro que esté despierta.',
     intro: 'Rutinas. Despertarse, vestirse, desayunar. Cosas que yo hago muy tarde.',
     dialog: [
@@ -596,7 +615,7 @@ const LESSONS = [
     outro: 'Ahora ya puedes contar tu día entero. Ojalá sea más interesante que el mío.',
   },
   {
-    id: 'l14', level: 3, ru: "Вчера'", es: 'Ayer',
+    id: 'l14', level: 2, ru: "Вчера'", es: 'Ayer',
     scene: 'Masha tiene cara de haber salido anoche. Increíble pero cierto.',
     intro: 'El pasado en ruso es fácil. De verdad. No te miento. Hoy no.',
     dialog: [
@@ -638,7 +657,7 @@ const LESSONS = [
     outro: 'Ya puedes contar el pasado. El mío es aburrido. El tuyo cuéntamelo en ruso.',
   },
   {
-    id: 'l15', level: 3, ru: "За'втра", es: 'Mañana',
+    id: 'l15', level: 2, ru: "За'втра", es: 'Mañana',
     scene: 'Masha mira el pronóstico del tiempo. Dice «sin lluvia». Ella no se lo cree.',
     intro: 'El futuro. Planes. Cosas que dirás que harás y no harás. Muy humano.',
     dialog: [
@@ -679,7 +698,7 @@ const LESSONS = [
     outro: 'Tenemos un plan. Si llueve, café. Si no llueve… también café, seguramente.',
   },
   {
-    id: 'l16', level: 3, ru: "Куда' ты идёшь?", es: '¿A dónde vas?',
+    id: 'l16', level: 2, ru: "Куда' ты идёшь?", es: '¿A dónde vas?',
     scene: 'Masha lleva una maleta. Va a Moscú para el cumpleaños de su hermana Katia. No está emocionada. Está muy emocionada.',
     intro: 'Hoy: ir. En ruso «ir» son varios verbos. A pie, en coche… Sí, de verdad.',
     dialog: [
@@ -722,7 +741,7 @@ const LESSONS = [
     outro: 'Sabes ir a pie y en tren. Te falta ir en oso. Eso es nivel avanzado.',
   },
   {
-    id: 'l17', level: 3, ru: "В магази'не", es: 'En la tienda',
+    id: 'l17', level: 2, ru: "В магази'не", es: 'En la tienda',
     scene: 'Masha volvió de Moscú y quiere hacer blinis. Van juntos a la tienda de la esquina. No hay leche.',
     intro: 'Compras. Y un caso que te va a perseguir toda la vida: el genitivo. Hoy solo con «no hay».',
     dialog: [
@@ -767,7 +786,7 @@ const LESSONS = [
     outro: 'Blinis con kéfir. Mi abuela se moriría. Pero salieron buenos.',
   },
   {
-    id: 'l18', level: 3, ru: "Пого'да", es: 'El clima',
+    id: 'l18', level: 2, ru: "Пого'да", es: 'El clima',
     scene: 'Petersburgo, octubre. Llueve de lado. Masha tiene tres tazas de té en la mesa.',
     intro: 'El tema favorito de los rusos después de la política: el clima. Y el mío: la lluvia.',
     dialog: [
@@ -806,12 +825,12 @@ const LESSONS = [
         { q: "___ тепло'.", es: 'Nosotros tenemos calorcito.', o: ["Нам", "Мы", "Нас"], x: 'Nosotros → нам.' },
       ],
     },
-    outro: 'Fin del nivel tres. Ya hablas del clima como un ruso: con resignación.',
+    outro: 'Ya hablas del clima como un ruso: con resignación.',
   },
 
   /* ───────────── NIVEL 4 ───────────── */
   {
-    id: 'l19', level: 4, ru: "У врача'", es: 'En el médico',
+    id: 'l19', level: 2, ru: "У врача'", es: 'En el médico',
     scene: 'Te resfriaste en Petersburgo (te lo dijo). Vas al médico. Luego llamas a Masha.',
     intro: 'Hoy: decir qué te duele. Ojalá nunca lo necesites. Lo vas a necesitar.',
     dialog: [
@@ -854,7 +873,7 @@ const LESSONS = [
     outro: 'Té con limón. Te lo dije desde la lección uno.',
   },
   {
-    id: 'l20', level: 4, ru: "На'до занима'ться", es: 'Hay que estudiar',
+    id: 'l20', level: 2, ru: "На'до занима'ться", es: 'Hay que estudiar',
     scene: 'Mañana hay un examen. Masha está más nerviosa que tú. No lo va a admitir.',
     intro: 'Obligaciones y permisos: hay que, se puede, no se puede. La vida en general.',
     dialog: [
@@ -896,7 +915,7 @@ const LESSONS = [
     outro: 'Vas a aprobar. Lo sé. Bueno, lo sospecho fuertemente.',
   },
   {
-    id: 'l21', level: 4, ru: "Уже' сде'лал?", es: '¿Ya lo hiciste?',
+    id: 'l21', level: 2, ru: "Уже' сде'лал?", es: '¿Ya lo hiciste?',
     scene: 'El día después del examen. Masha revisa si hiciste la tarea. Con lupa.',
     intro: 'El aspecto. El tema más ruso de todo el ruso. No llores. Es más lógico de lo que parece.',
     dialog: [
@@ -937,7 +956,7 @@ const LESSONS = [
     outro: 'El aspecto: lo entendiste. Bueno, lo empezaste a entender. Imperfectivo.',
   },
   {
-    id: 'l22', level: 4, ru: "Я ду'маю, что…", es: 'Yo pienso que…',
+    id: 'l22', level: 2, ru: "Я ду'маю, что…", es: 'Yo pienso que…',
     scene: 'Una charla tranquila. Masha quiere saber por qué estudias ruso. Finge que es por curiosidad profesional.',
     intro: 'Hoy: opiniones. Y unir frases con «que», «porque» y «pero». Frases largas. Como las mías cuando me quejo.',
     dialog: [
@@ -977,13 +996,13 @@ const LESSONS = [
     outro: 'Ya opinas en ruso. Ahora podrás discutir conmigo. Perderás, pero en ruso.',
   },
   {
-    id: 'l23', level: 4, ru: "С кем?", es: '¿Con quién?',
+    id: 'l23', level: 2, ru: "С кем?", es: '¿Con quién?',
     scene: 'Masha te enseña otra foto: ella de niña con su abuela, en la dacha. Se pone sentimental. Por un segundo.',
     intro: 'Hoy: «con». Con quién vives, con qué tomas el té. Y un caso nuevo: el instrumental.',
     dialog: [
       { ru: "С кем ты живёшь?", es: '¿Con quién vives?' },
       { u: [["Я живу' с семьёй.", 'Vivo con mi familia.'], ["Я живу' с дру'гом.", 'Vivo con un amigo.'], ["Я живу' {оди'н|одна'}.", 'Vivo solo/a.', 'Como yo. Bueno, yo con Pelmén.'], ["Я живу' с семья'.", 'Vivo con familia (mal dicho).', 'Con с: семьёй.']], k: 3 },
-      { ru: "А я живу' с котом. Он лу'чше, чем сосе'д.", es: 'Yo vivo con un gato. Es mejor que un compañero de piso.', e: 'smirk' },
+      { ru: "А я живу' с кото'м. Он лу'чше, чем сосе'д.", es: 'Yo vivo con un gato. Es mejor que un compañero de piso.', e: 'smirk' },
       { u: [["Ты пьёшь чай с молоко'м?", '¿Tomas el té con leche?'], ["Ты пьёшь чай с молоко'?", '¿Tomas el té con leche? (mal dicho)', 'С молоком. -ом.']] },
       { ru: "Нет. С лимо'ном. И'ли с варе'ньем. Как ба'бушка.", es: 'No. Con limón. O con mermelada. Como la abuela.', e: 'pleased' },
       { u: [["Я то'же люблю' чай с варе'ньем.", 'A mí también me gusta el té con mermelada.'], ["Я люблю' чай с варе'нье.", 'Me gusta el té con mermelada (mal dicho).', 'Con с: вареньем.']] },
@@ -1020,7 +1039,7 @@ const LESSONS = [
     outro: 'Ya conoces el instrumental. Te quedan otros casos. Pero esa es otra temporada.',
   },
   {
-    id: 'l24', level: 4, ru: "Не забыва'й!", es: '¡No olvides!',
+    id: 'l24', level: 2, ru: "Не забыва'й!", es: '¡No olvides!',
     scene: 'Última lección de este nivel. Masha preparó té especial. Dice que es coincidencia.',
     intro: 'Hoy: el imperativo. Dar órdenes. Mi forma verbal favorita.',
     dialog: [
@@ -1060,7 +1079,7 @@ const LESSONS = [
         { q: "___ ка'ждый день!", es: '¡Repasa cada día!', o: ["Повторя'й", "Повторя'ет", "Повторя'ть"], x: 'Повторяют → повторяй.' },
       ],
     },
-    outro: 'Terminaste el nivel cuatro. Ahora repasa. Todos los días. Te estaré mirando. Con cariño. Y con sospecha.',
+    outro: 'Terminaste el nivel dos. Y ahora, una sorpresa: te vienes a Petersburgo. Un semestre. Ya lo organicé. No preguntes. Trae paraguas.',
   },
 ];
 

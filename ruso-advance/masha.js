@@ -1,7 +1,7 @@
 /* Masha: avatar en SVG con expresiones, parpadeo y boca que se mueve cuando habla. */
 const Masha = (() => {
-  const SKIN = '#f4d9c6', SKIN_SH = '#e6bfa6', HAIR = '#9b7653', HAIR_SH = '#7a5a3d', HAIR_HI = '#bb9670';
-  const LINE = '#3b2a2a', BROW = '#5e4130', LIP = '#a5505a', MOUTH = '#7d2f3b';
+  const SKIN = '#f4d9c6', SKIN_SH = '#e6bfa6', HAIR = '#ecc76f', HAIR_SH = '#c99f45', HAIR_HI = '#fbe6a6';
+  const LINE = '#3b2a2a', BROW = '#a5793e', LIP = '#a5505a', MOUTH = '#7d2f3b';
 
   const BROWS = {
     neutral: ['M88 92 Q98 87 110 90', 'M130 90 Q142 87 152 92'],
@@ -92,8 +92,33 @@ const Masha = (() => {
       mug + '</svg>';
   }
 
+  /* versión pixel art (imágenes de PixelLab), si existen */
+  function mountPixel(el, P) {
+    let cur = 'neutral', talkTimer = null;
+    el.classList.add('pixel');
+    el.innerHTML = '<img class="masha-pixel" alt="Masha" src="' + (P.neutral || '') + '">';
+    const img = el.querySelector('img');
+    Object.values(P).forEach(src => { const i = new Image(); i.src = src; });
+    function set(expr) {
+      cur = P[expr] ? expr : 'neutral';
+      img.src = P[cur];
+      el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+    }
+    function talk(on) {
+      clearInterval(talkTimer); talkTimer = null;
+      el.classList.toggle('talking', !!on);
+      img.src = P[cur];
+      if (on && P.talk) {
+        let i = 0;
+        talkTimer = setInterval(() => { img.src = i++ % 2 ? P[cur] : P.talk; }, 160);
+      }
+    }
+    return { set, talk, get expr() { return cur; } };
+  }
+
   /* un avatar vivo dentro de un contenedor */
   function mount(el, opts) {
+    if (window.MASHA_PIXEL && window.MASHA_PIXEL.neutral) return mountPixel(el, window.MASHA_PIXEL);
     let cur = 'neutral', talkTimer = null;
     el.innerHTML = svg(cur, opts);
     const faceG = () => el.querySelector('.m-face');

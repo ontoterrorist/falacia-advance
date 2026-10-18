@@ -5,7 +5,7 @@
   /* ───────── estado guardado ───────── */
   const KEY = 'ruso-advance-v1';
   const DAY = 864e5;
-  const DEFAULT_SET = { translit: true, trans: 'auto', autoplay: true, rate: 0.85, typing: true, sfx: true, voice: '', limit: 60, unlockAll: false };
+  const DEFAULT_SET = { translit: true, trans: 'auto', autoplay: true, rate: 1, engine: 'neural', typing: true, sfx: true, voice: '', limit: 60, unlockAll: false };
   function fresh() {
     return { v: 1, name: '', g: '', started: Date.now(), done: {}, cards: {}, xp: 0, days: [], set: { ...DEFAULT_SET }, seenIntro: false };
   }
@@ -27,6 +27,8 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
+  /* solo el género: el texto queda con sus acentos y con {name}, como lo usa el motor de voz */
+  const resolveG = s => String(s).replace(/\{([^{}|]*)\|([^{}|]*)\}/g, (m, a, b) => S.g === 'f' ? b : a);
   function resolve(s) {
     return String(s).replace(/\{name\}/g, S.name || 'amigo').replace(/\{([^{}|]*)\|([^{}|]*)\}/g, (m, a, b) => S.g === 'f' ? b : a);
   }
@@ -81,7 +83,7 @@
   /* ruso con transliteración opcional debajo */
   const ruHTML = (s, cls) => '<span class="ru ' + (cls || '') + '">' + show(s) + '</span>' + (S.set.translit && isCyr(s) ? '<span class="tr">' + esc(translit(s)) + '</span>' : '');
   /* textos propios con HTML (notas, frases de Masha): solo se escapa el nombre; el ruso entre [[ ]] se vuelve tocable */
-  const rich = s => stress(resolve(String(s).replace(/\{name\}/g, esc(S.name || 'amigo')))).replace(/\[\[(.+?)\]\]/g, (m, t) => '<span class="say" data-say="' + esc(t.replace(/́/g, '')) + '">' + t + '</span>');
+  const rich = s => stress(resolve(String(s).replace(/\{name\}/g, esc(S.name || 'amigo')))).replace(/\[\[(.+?)\]\]/g, (m, t) => '<span class="say" data-say="' + esc(t) + '">' + t + '</span>');
 
   /* ───────── voz ───────── */
   const synth = window.speechSynthesis;
@@ -96,20 +98,76 @@
     if (S.set.voice) { const v = ruVoices.find(v => v.name === S.set.voice); if (v) return v; }
     return ruVoices.find(v => /milena|katya|svetlana|dariya|irina|alena|google/i.test(v.name)) || ruVoices[0];
   }
-  function speak(text, opt) {
+  /* voz del navegador: respaldo cuando falta un audio, y para el nombre de quien estudia */
+  function browserSay(text, opt) {
     opt = opt || {};
-    if (!synth || !text) { if (opt.done) opt.done(); return; }
-    synth.cancel();
+    if (!synth || !text || !ruVoices.length && !/[a-z]/i.test(text)) { if (opt.done) setTimeout(opt.done, 10); return; }
     const u = new SpeechSynthesisUtterance(plain(text).replace(/…/g, ', '));
     u.lang = 'ru-RU';
     const v = voice(); if (v) u.voice = v;
-    u.rate = opt.rate || S.set.rate;
+    u.rate = (S.set.rate || 1) * 0.85;
     u.pitch = opt.pitch || 1;
     let ended = false;
     const end = () => { if (ended) return; ended = true; if (opt.masha) M.talk(false); if (opt.done) opt.done(); };
     u.onstart = () => { if (opt.masha) M.talk(true); };
     u.onend = end; u.onerror = end;
     synth.speak(u);
+  }
+
+  /* Motor de voz: cada frase del curso tiene su audio, generado con voces neuronales rusas (Piper)
+     y con la sílaba tónica que marca el curso. El archivo se encuentra por un hash de «voz|texto». */
+  function cyrb53(str, seed) {
+    seed = seed || 0;
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+  }
+  const voiceId = v => v === 'user' ? (S.g === 'f' ? 'user_f' : 'user_m') : (v || 'masha');
+  let curAudio = null, voiceToken = 0;
+  function stopVoice() {
+    voiceToken++;
+    if (curAudio) { curAudio.onended = curAudio.onerror = null; curAudio.pause(); curAudio = null; }
+    if (synth) synth.cancel();
+    M.talk(false);
+  }
+  function speak(text, opt) {
+    opt = opt || {};
+    stopVoice();
+    if (!text) { if (opt.done) opt.done(); return; }
+    const token = voiceToken, vid = voiceId(opt.voice);
+    const masha = opt.masha !== undefined ? opt.masha : vid === 'masha';
+    const raw = resolveG(String(text).replace(/\u0301/g, "'"));
+    const queue = [];
+    raw.split('{name}').forEach((part, i) => {
+      if (i > 0 && S.name) queue.push({ name: S.name });
+      const t = part.trim();
+      if (isCyr(t)) queue.push({ text: t });
+    });
+    let i = 0;
+    const next = () => {
+      if (token !== voiceToken) return;
+      if (i >= queue.length) { if (masha) M.talk(false); if (opt.done) opt.done(); return; }
+      const q = queue[i++];
+      const fallback = () => { if (token === voiceToken) browserSay(q.name || q.text, { done: next, masha, pitch: opt.pitch }); };
+      if (q.name || S.set.engine === 'browser') return fallback();
+      const a = new Audio('audio/' + cyrb53(vid + '|' + q.text) + '.mp3');
+      curAudio = a;
+      a.playbackRate = S.set.rate || 1;
+      a.onplaying = () => { if (masha && token === voiceToken) M.talk(true); };
+      a.onended = () => { if (masha) M.talk(false); next(); };
+      a.onerror = fallback;
+      const p = a.play();
+      if (p) p.catch(err => { if (err && err.name === 'NotAllowedError') { if (masha) M.talk(false); } else fallback(); });
+    };
+    next();
   }
   const PITCH = { olga: 0.8, waiter: 0.6, seller: 1.1, doctor: 0.7 };
 
@@ -268,14 +326,14 @@
   /* cualquier [data-say] dice su texto */
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-say]');
-    if (t) speak(t.dataset.say, { masha: t.dataset.masha === '1' });
+    if (t) speak(t.dataset.say, { voice: t.dataset.voice || 'masha' });
   });
 
   function toast(msg) {
     const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
     document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
   }
-  const sayBtn = (text, extra) => '<button class="icon-btn" data-say="' + esc(plain(text)) + '" ' + (extra || '') + ' aria-label="Escuchar" title="Escuchar">🔊</button>';
+  const sayBtn = (text, extra, voice) => '<button class="icon-btn" data-say="' + esc(resolveG(text)) + '" data-voice="' + (voice || 'masha') + '" ' + (extra || '') + ' aria-label="Escuchar" title="Escuchar">🔊</button>';
 
   /* ───────── bienvenida ───────── */
   function renderOnboard() {
@@ -361,16 +419,22 @@
   function renderPath() {
     const nl = nextLesson();
     say(nl ? 'Las lecciones van en orden. Cada una abre la siguiente. Sí, como un videojuego. No, no hay jefe final. Bueno, yo.' : 'Todo terminado. Puedes repetir cualquier conversación. Te reto a hacerlo sin traducción.', 'smirk');
-    main.innerHTML = LEVELS.map(lv => `
-      <section class="level">
-        <div class="level-head"><h2>Nivel ${lv.id} · <span class="ru">${show(lv.ru)}</span></h2><span class="muted small">${esc(lv.es)} — ${esc(lv.note)}</span></div>
-        <div class="lessons">${LESSONS.filter(L => L.level === lv.id).map(L => {
+    const openLv = nl ? nl.level : LEVELS.length;
+    main.innerHTML = LEVELS.map(lv => {
+      const ls = LESSONS.filter(L => L.level === lv.id), nd = ls.filter(isDone).length;
+      return `<details class="level" ${lv.id === openLv ? 'open' : ''}>
+        <summary class="level-head"><h2>Nivel ${lv.id} · <span class="ru">${show(lv.ru)}</span></h2><span class="muted small grow">${esc(lv.es)} — ${esc(lv.note)}</span>
+          <span class="lv-prog" title="${nd} de ${ls.length}"><i style="width:${Math.round(nd / ls.length * 100)}%"></i></span><b class="small">${nd}/${ls.length}</b></summary>
+        <div class="lessons">${ls.map(L => {
           const i = LESSON_IDX[L.id] + 1, d = isDone(L), u = unlocked(L);
           return `<button class="lesson-tile ${d ? 'done' : ''} ${L === nl ? 'next' : ''} ${u ? '' : 'locked'}" data-l="${L.id}" ${u ? '' : 'aria-disabled="true"'}>
             <span class="n">${i}</span><span class="st">${d ? '✓ hecha' : L === nl ? '▶ siguiente' : u ? '' : '🔒'}</span>
             <span class="t">${show(L.ru)}</span><span class="s">${esc(L.es)}</span></button>`;
         }).join('')}</div>
-      </section>`).join('');
+      </details>`;
+    }).join('');
+    const cur = $('details[open] .next');
+    if (cur) setTimeout(() => cur.scrollIntoView({ block: 'center' }), 50);
     $$('[data-l]').forEach(b => b.onclick = () => {
       const L = LESSONS[LESSON_IDX[b.dataset.l]];
       if (!unlocked(L)) { say('Esa todavía no. Primero «' + show(nextLesson().ru) + '». Paciencia. Es una virtud rusa. Bueno, más o menos.', 'annoyed', true); return; }
@@ -418,7 +482,7 @@
       d.className = 'msg' + (me ? ' me' : '');
       d.innerHTML = '<div class="head">' + who + '</div><div class="line"><div class="grow">' + ruHTML(st.ru) +
         '<span class="es ' + (showOpts ? '' : 'hid') + '" title="Toca para ver">' + esc(resolve(st.es)) + '</span></div>' +
-        sayBtn(st.ru, (me ? '' : 'data-masha="' + (st.who ? 0 : 1) + '"')) + '</div>';
+        sayBtn(st.ru, '', me ? 'user' : (st.who || 'masha')) + '</div>';
       const es = $('.es', d); es.onclick = () => es.classList.remove('hid');
       chat.appendChild(d);
       d.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -435,7 +499,7 @@
       if (st.ru) {
         bubble(st);
         if (!st.who) M.set(st.e || 'neutral');
-        if (S.set.autoplay) speak(st.ru, { masha: !st.who, pitch: PITCH[st.who] });
+        if (S.set.autoplay) speak(st.ru, { voice: st.who || 'masha', pitch: PITCH[st.who] });
         i++;
         if (L.dialog[i] && L.dialog[i].u) return step();
         act.innerHTML = '<div class="row" style="margin-top:14px"><button class="btn primary" data-enter id="nx">Siguiente ▸</button></div>';
@@ -459,7 +523,7 @@
         sfx('ok');
         $$('.choice', act).forEach(x => x.disabled = true);
         const d = bubble({ ru: o.ru, es: o.es }, true);
-        if (S.set.autoplay) speak(o.ru, { rate: S.set.rate });
+        if (S.set.autoplay) speak(o.ru, { voice: 'user' });
         if (o.c) say(o.c, pick(['smirk', 'pleased']));
         else if (Math.random() < 0.35) say(line('right'), 'pleased');
         else say(pick(['Bien.', 'Ajá.', 'Хорошо.', 'Sigue.', 'Да. Eso.', 'Ну да.', 'Vale.']), pick(['neutral', 'pleased']));
@@ -660,7 +724,7 @@
         answerRu = C.ru; autoAudio = C.ru;
         body = ex.kind === 'ru2es'
           ? `<div class="ex-type">${isNew ? 'Nueva · ' : ''}¿Qué significa?</div><div class="prompt">${ruHTML(C.ru)} ${sayBtn(C.ru, 'data-replay')}</div>`
-          : `<div class="ex-type">Escucha · ¿Qué significa?</div><div class="listen-big"><button data-say="${esc(plain(C.ru))}" data-replay aria-label="Escuchar otra vez">🔊</button></div>`;
+          : `<div class="ex-type">Escucha · ¿Qué significa?</div><div class="listen-big"><button data-say="${esc(resolveG(C.ru))}" data-voice="masha" data-replay aria-label="Escuchar otra vez">🔊</button></div>`;
       } else if (ex.kind === 'es2ru') {
         const ds = distractors(C, 3, 'ru');
         options = shuffle([{ h: ruHTML(C.ru), ok: true }, ...ds.map(d => ({ h: ruHTML(d.ru) }))]);
@@ -689,7 +753,7 @@
         body = `<div class="ex-type">Conversación · ¿Qué respondes?</div>
           <div class="msg" style="max-width:100%"><div class="head">${who}</div><div class="line"><div class="grow">
           ${ex.kind === 'conv-listen' ? '<span class="ru hidden-line" id="hl">· · ·</span><button class="chip" id="showl">Ver texto</button>' : ruHTML(p.ru)}
-          <span class="es hid" id="pes">${esc(resolve(p.es))}</span></div>${sayBtn(p.ru, 'data-replay data-masha="' + (p.who ? 0 : 1) + '"')}</div></div>`;
+          <span class="es hid" id="pes">${esc(resolve(p.es))}</span></div>${sayBtn(p.ru, 'data-replay', p.who || 'masha')}</div></div>`;
       } else if (ex.kind === 'drill') {
         const d = C.G.drills[ex.j];
         options = shuffle(d.o.map((t, j) => ({ h: isCyr(t) ? ruHTML(t) : esc(t), ok: j === 0, ru: t })));
@@ -716,7 +780,7 @@
         (options ? '<div class="choices">' + options.map((op, j) => '<button class="choice" data-k="' + (j + 1) + '" data-j="' + j + '">' + op.h + '</button>').join('') + '</div>' : '') +
         '<div id="fb"></div></div>';
       $('#quit').onclick = () => { save(); go(o.mode === 'lesson' ? '#path' : '#home'); };
-      if (autoAudio && S.set.autoplay) speak(autoAudio, { masha: ex.kind === 'conv' || ex.kind === 'conv-listen' ? !C.prompt.who : false, pitch: ex.C.prompt && PITCH[ex.C.prompt.who] });
+      if (autoAudio && S.set.autoplay) speak(autoAudio, { voice: C.prompt ? (C.prompt.who || 'masha') : 'masha', pitch: C.prompt && PITCH[C.prompt.who] });
       const pes = $('#pes'); if (pes) pes.onclick = () => pes.classList.remove('hid');
       const sl = $('#showl'); if (sl) sl.onclick = () => { $('#hl').outerHTML = ruHTML(C.prompt.ru); sl.remove(); };
 
@@ -724,7 +788,7 @@
         const op = options[+b.dataset.j];
         $$('.choice', main).forEach((x, j) => { x.disabled = true; if (options[j].ok) x.classList.add('ok'); else if (x !== b) x.classList.add('dim'); });
         if (!op.ok) b.classList.add('bad');
-        answered(ex, !!op.ok, { answerRu, comment: op.c, chosen: op });
+        answered(ex, !!op.ok, { answerRu, comment: op.c, chosen: op, voice: ex.kind.startsWith('conv') ? 'user' : 'masha' });
       });
       if (ex.kind === 'tiles') {
         const ans = $('#ans');
@@ -734,7 +798,7 @@
           const c = document.createElement('button'); c.className = 'tile'; c.textContent = t.textContent; c.dataset.j = t.dataset.j;
           c.onclick = () => { c.remove(); t.classList.remove('used'); };
           ans.appendChild(c);
-          speak(t.textContent, { rate: S.set.rate });
+          stopVoice(); browserSay(t.textContent);
         });
         $('#clr').onclick = () => { ans.innerHTML = ''; $$('#bank .tile').forEach(t => t.classList.remove('used')); };
         $('#chk').onclick = () => {
@@ -779,7 +843,7 @@
       else say(line('wrong'), pick(['annoyed', 'sad', 'eyeroll']));
 
       let html = '<div class="feedback ' + (right ? 'ok' : 'bad') + '"><h3>' + (right ? (info.typo ? 'Casi perfecto' : pick(['Правильно!', 'Хорошо!', 'Верно!'])) : 'Не совсем…') + '</h3>';
-      if (info.answerRu) html += '<div class="row">' + sayBtn(info.answerRu) + '<div class="grow">' + ruHTML(info.answerRu) + (ex.C.es && ex.C.t === 'p' ? '<span class="es">' + esc(resolve(ex.C.es)) + '</span>' : '') + '</div></div>';
+      if (info.answerRu) html += '<div class="row">' + sayBtn(info.answerRu, '', info.voice) + '<div class="grow">' + ruHTML(info.answerRu) + (ex.C.es && ex.C.t === 'p' ? '<span class="es">' + esc(resolve(ex.C.es)) + '</span>' : '') + '</div></div>';
       if (ex.kind.startsWith('conv')) html += '<p class="small muted" style="margin-top:6px">' + show(ex.C.prompt.ru) + ' — ' + esc(resolve(ex.C.prompt.es)) + '</p>';
       if (ex.explain) html += '<p class="small" style="margin-top:6px">' + show(ex.explain) + '</p>';
       if (ex.C.note && !right) html += '<p class="small">' + esc(ex.C.note) + '</p>';
@@ -810,7 +874,7 @@
       html += '</div>';
       $('#fb').innerHTML = html;
       $('#fb').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      if (info.answerRu && !right && S.set.autoplay) speak(info.answerRu);
+      if (info.answerRu && !right && S.set.autoplay) speak(info.answerRu, { voice: info.voice });
       const cont = $('#cont');
       if (cont) cont.onclick = () => graded(right ? (info.typo ? 1 : 2) : 0);
       $$('.grades .btn').forEach(b => b.onclick = () => graded(+b.dataset.q));
@@ -834,7 +898,7 @@
       say('El alfabeto. Treinta y tres letras. Cinco son trampas: В, Н, Р, С, У, Х. Parecen latinas y no lo son. Bueno, seis.', 'smirk');
       main.innerHTML = tabs + `<div class="card dark"><p>No hace falta aprender el alfabeto antes de empezar: las lecciones llevan transliteración. Pero cuanto antes leas cirílico, mejor.</p>
         <button class="btn ${inDeck ? '' : 'primary'}" id="addabc" ${inDeck ? 'disabled' : ''}>${inDeck ? 'El alfabeto ya está en tu repaso' : 'Añadir las 33 letras al repaso'}</button></div>
-        <div class="abc">${ALPHABET.map(a => `<button data-say="${esc(plain(a[2]))}"><span class="L">${a[0]}</span><span class="snd">${esc(a[1])}</span><span class="ex">${show(a[2])}</span></button>`).join('')}</div>`;
+        <div class="abc">${ALPHABET.map(a => `<button data-say="${esc(a[2])}" data-voice="masha"><span class="L">${a[0]}</span><span class="snd">${esc(a[1])}</span><span class="ex">${show(a[2])}</span></button>`).join('')}</div>`;
       const b = $('#addabc');
       if (b && !inDeck) b.onclick = () => {
         ALPHABET.forEach((_, i) => { if (!S.cards['a:' + i]) S.cards['a:' + i] = newCard(); });
@@ -856,7 +920,7 @@
     const sw = (k, label, sub) => `<div class="set"><label for="s-${k}">${label}<small>${sub}</small></label><span class="switch"><input type="checkbox" id="s-${k}" data-set="${k}" ${S.set[k] ? 'checked' : ''}><span></span></span></div>`;
     const voices = ruVoices.length
       ? `<select id="s-voice"><option value="">Automática</option>${ruVoices.map(v => `<option ${v.name === S.set.voice ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select>`
-      : '<span class="muted small">No encontré voces en ruso en este navegador. Prueba Chrome, Edge o Safari, o instala la voz rusa en tu sistema.</span>';
+      : '<span class="muted small">Tu navegador no tiene voz rusa propia. No pasa nada: el motor de Masha no la necesita.</span>';
     main.innerHTML = `<h1>Ajustes</h1>
       <div class="card">
         <div class="set"><label for="s-name">Tu nombre<small>Masha lo usa en los diálogos.</small></label><input type="text" id="s-name" maxlength="24" value="${esc(S.name)}"></div>
@@ -869,8 +933,9 @@
         ${sw('unlockAll', 'Desbloquear todas las lecciones', 'Si ya sabes algo de ruso y quieres saltar.')}
       </div>
       <div class="card">
-        <div class="set"><label for="s-voice">Voz rusa<small>Depende de tu navegador y sistema.</small></label>${voices} <button class="btn ghost" id="test">Probar</button></div>
-        <div class="set"><label for="s-rate">Velocidad de la voz<small id="ratev">${S.set.rate.toFixed(2)}×</small></label><input type="range" id="s-rate" min="0.5" max="1.2" step="0.05" value="${S.set.rate}"></div>
+        <div class="set"><label>Motor de voz<small>«Masha»: voces neuronales rusas grabadas para cada frase, con el acento correcto. «Navegador»: la voz de tu sistema.</small></label><span class="seg">${[['neural', 'Masha'], ['browser', 'Navegador']].map(([v, l]) => `<button data-eng="${v}" class="${S.set.engine === v ? 'on' : ''}">${l}</button>`).join('')}</span> <button class="btn ghost" id="test">Probar</button></div>
+        <div class="set"><label for="s-voice">Voz del navegador<small>Se usa con el motor «Navegador», para tu nombre y para las palabras sueltas.</small></label>${voices}</div>
+        <div class="set"><label for="s-rate">Velocidad de la voz<small id="ratev">${S.set.rate.toFixed(2)}×</small></label><input type="range" id="s-rate" min="0.6" max="1.3" step="0.05" value="${S.set.rate}"></div>
         <div class="set"><label for="s-limit">Tarjetas por sesión de repaso<small>Las que sobren quedan para la siguiente.</small></label><select id="s-limit">${[20, 40, 60, 100, 200].map(n => `<option ${n === S.set.limit ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
       </div>
       <div class="card">
@@ -883,8 +948,9 @@
     $('#s-name').onchange = e => { const v = e.target.value.trim(); if (v) { S.name = v; save(); toast('Nombre guardado'); } };
     $$('[data-g]').forEach(b => b.onclick = () => { S.g = b.dataset.g; save(); renderSettings(); });
     $$('[data-tr]').forEach(b => b.onclick = () => { S.set.trans = b.dataset.tr; save(); renderSettings(); });
+    $$('[data-eng]').forEach(b => b.onclick = () => { S.set.engine = b.dataset.eng; save(); renderSettings(); });
     const sv = $('#s-voice'); if (sv) sv.onchange = () => { S.set.voice = sv.value; save(); };
-    $('#test').onclick = () => speak('Приве\'т! Меня\' зову\'т Ма\'ша. Я люблю\' чай.', { masha: true });
+    $('#test').onclick = () => speak("Я Ма'ша. А как тебя' зову'т?", { voice: 'masha' });
     $('#s-rate').oninput = e => { S.set.rate = +e.target.value; $('#ratev').textContent = S.set.rate.toFixed(2) + '×'; save(); };
     $('#s-limit').onchange = e => { S.set.limit = +e.target.value; save(); };
     $('#exp').onclick = () => {
