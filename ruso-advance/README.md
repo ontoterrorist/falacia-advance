@@ -46,7 +46,7 @@ Para regenerarlos hace falta Python con `onnxruntime`, `espeak-ng` y los modelos
 
 ## Masha
 
-Masha es rubia, de pelo medio largo, cínica y amable. Está dibujada en SVG con ocho expresiones, parpadea y mueve la boca cuando habla.
+Masha es rubia, lleva el pelo recogido en una cola sobre el hombro, y es cínica y amable. Está dibujada en SVG con ocho expresiones, parpadea y mueve la boca cuando habla.
 
 Para usar un avatar en pixel art hecho con [PixelLab](https://www.pixellab.ai): `PIXELLAB_API_KEY=… python3 tools/pixellab_avatar.py`. El script genera una Masha base y repinta la cara para cada expresión; la app la usa automáticamente en cuanto existe `avatar/pixel.js` con las imágenes.
 

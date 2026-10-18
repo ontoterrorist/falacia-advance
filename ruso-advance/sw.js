@@ -1,6 +1,6 @@
 /* Ruso Advance — service worker: guarda la app en el teléfono para usarla sin conexión. */
 const PREFIX = 'ruso-advance-';
-const CACHE = PREFIX + 'v2';
+const CACHE = PREFIX + 'v3';
 const AUDIO = PREFIX + 'audio';
 const SHELL = ['./', 'index.html', 'styles.css', 'masha.js', 'data.js', 'app.js', 'manifest.webmanifest', 'avatar/pixel.js',
   'lecciones/n03.js', 'lecciones/n04.js', 'lecciones/n05.js', 'lecciones/n06.js', 'lecciones/n07.js', 'lecciones/n08.js', 'lecciones/n09.js', 'lecciones/n10.js',

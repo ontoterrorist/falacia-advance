@@ -26,8 +26,8 @@ CARA = (36, 22, 92, 78)  # zona de la cara que se repinta en cada expresión
 AQUI = os.path.dirname(os.path.abspath(__file__))
 SALIDA = os.path.join(AQUI, '..', 'avatar')
 
-BASE = ('pixel art bust portrait of Masha, a young Russian woman, long straight blonde hair '
-        'past her shoulders, side-swept bangs, gray-blue eyes, light freckles, burgundy turtleneck '
+BASE = ('pixel art bust portrait of Masha, a young Russian woman, blonde hair pulled back '
+        'into a ponytail resting over her shoulder, forehead uncovered, one loose strand, gray-blue eyes, light freckles, burgundy turtleneck '
         'sweater, holding a white tea mug with a red folk pattern, front view, centered, '
         'warm soft lighting, clean outline')
 EXPRESIONES = {

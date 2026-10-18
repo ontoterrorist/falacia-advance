@@ -64,8 +64,8 @@ const Masha = (() => {
       '<path d="M160 208 h38 v34 q0 12 -12 12 h-14 q-12 0 -12 -12 z" fill="#f6efe2" stroke="#d9cdb8" stroke-width="1.5"/>' +
       '<path d="M160 218 h38" stroke="#c8343f" stroke-width="3"/><circle cx="170" cy="230" r="3" fill="#c8343f"/><circle cx="179" cy="236" r="3" fill="#e0a526"/><circle cx="188" cy="230" r="3" fill="#c8343f"/></g>';
     return '<svg class="masha-svg" viewBox="0 0 240 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Masha">' +
-      /* pelo de atrás */
-      '<path d="M120 38 C72 38 56 76 58 120 C60 160 54 196 46 222 C66 232 92 228 100 216 L100 166 L140 166 L140 216 C148 228 174 232 194 222 C186 196 180 160 182 120 C184 76 168 38 120 38 Z" fill="' + HAIR_SH + '"/>' +
+      /* pelo de atrás: recogido, solo asoma alrededor de la cabeza */
+      '<path d="M120 40 C78 40 64 70 66 104 C67 124 72 136 80 146 L160 146 C168 136 173 124 174 104 C176 70 162 40 120 40 Z" fill="' + HAIR_SH + '"/>' +
       /* cuello y cuerpo */
       '<path d="M106 146 h28 v40 h-28 z" fill="' + SKIN_SH + '"/>' +
       '<path d="M30 262 C34 214 74 192 120 192 C166 192 206 214 210 262 Z" fill="#7b2d3b"/>' +
@@ -81,14 +81,16 @@ const Masha = (() => {
       '<path d="M121 115 C119 124 116 128 121 130.5" fill="none" stroke="' + SKIN_SH + '" stroke-width="2.2" stroke-linecap="round"/>' +
       '<g fill="#c99a7e" opacity=".55"><circle cx="108" cy="122" r="1"/><circle cx="112" cy="125" r="1"/><circle cx="104" cy="125" r="1"/><circle cx="132" cy="122" r="1"/><circle cx="128" cy="125" r="1"/><circle cx="136" cy="125" r="1"/></g>' +
       '<g class="m-face">' + face(expr || 'neutral') + '</g>' +
-      /* mechones sobre los hombros */
-      '<path d="M82 92 C70 120 74 170 66 222 C76 230 92 226 96 214 C92 186 86 150 92 110 Z" fill="' + HAIR + '"/>' +
-      '<path d="M158 92 C170 120 166 170 174 222 C164 230 148 226 144 214 C148 186 154 150 148 110 Z" fill="' + HAIR + '"/>' +
-      '<path d="M80 130 C78 160 76 190 72 214" fill="none" stroke="' + HAIR_HI + '" stroke-width="2" opacity=".6"/><path d="M162 140 C164 170 166 196 168 214" fill="none" stroke="' + HAIR_SH + '" stroke-width="2" opacity=".7"/>' +
-      /* flequillo de lado */
-      '<path d="M76 106 C66 60 100 40 124 42 C154 44 176 66 166 108 C164 94 159 84 152 77 C136 69 108 70 94 80 C86 86 80 95 76 106 Z" fill="' + HAIR + '"/>' +
-      '<path d="M152 77 C140 72 124 72 112 75 C126 74 140 76 150 82 Z" fill="' + HAIR_SH + '"/>' +
-      '<path d="M90 70 C104 56 124 52 146 58" fill="none" stroke="' + HAIR_HI + '" stroke-width="3" stroke-linecap="round" opacity=".7"/>' +
+      /* cola de caballo sobre el hombro, con su gomita */
+      '<path d="M70 94 C50 106 44 140 52 168 C58 190 52 210 44 228 C56 236 72 230 78 214 C86 190 80 160 83 132 C85 116 82 102 70 94 Z" fill="' + HAIR + '"/>' +
+      '<path d="M66 112 C56 136 60 162 62 184 C63 198 58 212 52 224" fill="none" stroke="' + HAIR_SH + '" stroke-width="2" opacity=".7"/>' +
+      '<path d="M74 120 C72 146 76 170 72 200" fill="none" stroke="' + HAIR_HI + '" stroke-width="2" opacity=".7"/>' +
+      '<ellipse cx="72" cy="102" rx="8" ry="5.5" transform="rotate(-30 70 100)" fill="#7b2d3b"/><ellipse cx="70" cy="100" rx="3" ry="1.6" transform="rotate(-30 68 98)" fill="#a04456"/>' +
+      /* pelo peinado hacia atrás, con la frente despejada y un mechón suelto */
+      '<path d="M78 104 C74 62 98 41 122 41 C150 41 168 62 163 104 C160 88 152 74 140 67 C128 61 111 61 99 67 C88 74 81 88 78 104 Z" fill="' + HAIR + '"/>' +
+      '<path d="M100 66 C96 56 98 49 104 45 M118 63 C116 54 118 47 123 43 M136 65 C138 56 140 50 146 47" fill="none" stroke="' + HAIR_SH + '" stroke-width="1.8" stroke-linecap="round" opacity=".8"/>' +
+      '<path d="M88 64 C102 50 126 46 150 54" fill="none" stroke="' + HAIR_HI + '" stroke-width="3" stroke-linecap="round" opacity=".7"/>' +
+      '<path d="M159 84 C166 102 163 122 156 138" fill="none" stroke="' + HAIR + '" stroke-width="3.2" stroke-linecap="round"/>' +
       mug + '</svg>';
   }
 
