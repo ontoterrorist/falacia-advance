@@ -2155,8 +2155,8 @@ const MENU = () => [
   ['CLASES CON EL SABIO', 'Los conceptos clave y las 39 falacias, explicados paso a paso.', 'think', () => go('clases')],
   ['RELÁMPAGO', `60 segundos: ¿falacia o no? Formales, informales, el resto o todas. Tu mejor marca: ${S.flash}.`, 'surprised', () => go('flashsel')],
   ['TORNEO', `15 preguntas y solo 3 vidas. Formales, informales, el resto o todas. Tu mejor marca: ${S.best}.`, 'cool', () => go('torsel')],
-  ...(RK_ON && !S.rk ? [['REGISTRARSE', 'Crea tu cuenta con un apodo y una contraseña, sin correo. Con ella tus marcas aparecerán en el ranking junto a las de los demás jugadores.', 'wink', () => go('cuenta', { from: 0 })]] : []),
-  ...(RK_ON ? [['RANKING', S.rk ? `Las mejores marcas de todos los jugadores. Sesión: ${S.rk.nick}.` : 'Las mejores marcas de todos los jugadores. Entras con un apodo y una contraseña, sin correo.', 'star', () => go('ranking', { b: 0 })]] : []),
+  ...(RK_ON && !S.rk ? [['REGISTRARSE', 'Crea tu cuenta con un apodo y una contraseña. Con ella tus marcas aparecerán en el ranking junto a las de los demás jugadores.', 'wink', () => go('cuenta', { from: 0 })]] : []),
+  ...(RK_ON ? [['RANKING', S.rk ? `Las mejores marcas de todos los jugadores. Sesión: ${S.rk.nick}.` : 'Las mejores marcas de todos los jugadores. Entras con un apodo y una contraseña.', 'star', () => go('ranking', { b: 0 })]] : []),
   ['JEFE: LA COLUMNA', 'Seis falacias escondidas en una columna de opinión.', 'scared', () => go('lesson', { boss: true, pg: 0 })],
   ['FALACIDEX', `Tu álbum de falacias: ${caughtN()} de ${DEX.length} capturadas.`, 'love', () => go('dex')],
   ['PERFIL Y LOGROS', `Tu rango, tus marcas y ${achN()} de ${ACH.length} logros. ¡Y mis emociones!`, 'happy', () => go('perfil')],
@@ -2766,7 +2766,7 @@ R.cuenta = () => {
   }
   V.n = 4;
   return `<div class="hud"><span class="chip">CUENTA</span><span class="ttl">Entra al ranking</span></div>
-  <div class="frow">${bot(V.busy ? 'think' : 'neutral')}<div class="bubble tail" id="say">${esc(V.msg || 'Con tu cuenta tus marcas aparecen en el ranking. Elige un apodo (3 a 14 letras o números) y una contraseña de 6 o más. No pido correo.')}</div></div>
+  <div class="frow">${bot(V.busy ? 'think' : 'neutral')}<div class="bubble tail" id="say">${esc(V.msg || 'Con tu cuenta tus marcas aparecen en el ranking. Elige un apodo (3 a 14 letras o números) y una contraseña de 6 o más.')}</div></div>
   <div class="list scroll grow">
     <div class="opt inp" data-i="0"><span class="lb">APODO</span><input id="rk-nick" maxlength="14" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next"></div>
     <div class="opt inp" data-i="1"><span class="lb">CLAVE</span><input id="rk-pw" type="password" maxlength="64" autocomplete="current-password" enterkeyhint="go"></div>
